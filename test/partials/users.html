@@ -3,5 +3,6 @@
 <ul data-hyper=".users">
   <li data-ng-repeat="user in users">
     <a data-hyper-bind="user.name" data-hyper-link="/users/:user"></a>
+    <span data-hyper-bind="user.hobby" data-feature="hobbies"></span>
   </li>
 </ul>

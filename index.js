@@ -12,6 +12,7 @@ if (window.env) envs.set(window.env);
 
 var angular = require('angular');
 var hyper = require('ng-hyper');
+var feature = require('ng-feature');
 var logger = require('./lib/logger');
 var hyperagent = require('hyperagent');
 var token = require('access-token');
@@ -25,6 +26,7 @@ var featureUI = require('feature-ui');
 exports = module.exports = function(mod, deps) {
   if (!deps) return angular.module(mod);
   deps.push(hyper.name);
+  deps.push(feature.name);
   var app = angular.module(mod, deps);
   app.name = mod;
   return app;
@@ -101,5 +103,7 @@ exports.run = function(app, options, loadPartial) {
    * Show the feature UI
    */
 
-  setTimeout(featureUI, 0);
+  setTimeout(function() {
+    featureUI(options.feature);
+  }, 0);
 }

@@ -13,6 +13,7 @@
     "CamShaft/ng-hyper": "*",
     "CamShaft/hyperagent": "*",
     "CamShaft/hyper-emitter": "*",
+    "CamShaft/ng-feature": "*",
     "CamShaft/feature-ui": "*",
     "component/each": "*"
   },

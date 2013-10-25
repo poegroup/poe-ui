@@ -1,4 +1,5 @@
 {
   "href": "/api/789.json",
-  "name": "Ted"
+  "name": "Ted",
+  "hobby": "keyboard"
 }
