@@ -1,0 +1,43 @@
+<html>
+<head>
+  <title>Simple UI Test</title>
+  <script type="text/javascript">
+    var start = Date.now();
+  </script>
+  <style type="text/css">
+    body {
+      font-family: Helvetica, Arial, san-serif;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body data-ng-app="test">
+
+  <a href="/">Root</a>
+  <a href="/users">Users</a>
+  <a href="/non-existant">Non existant</a>
+  <a href="/users/aHR0cHM6Ly9hcGkudGhlZmxva2suY29tL2l0ZW1zLzc3ejdTYk1WVHNlWk9kZUs3UmRnblNSR0hzOA">Cross-domain</a>
+
+  <div data-ng-view=""></div>
+
+  <script src="/build/build.js"></script>
+  <script>
+    window.env = {API_URL: '/api/index.json'};
+    var simple = require('simple-ui');
+
+    var app = simple('test', []);
+
+    var routes = {
+      '/': '/partials/index.html',
+      '/users': '/partials/users.html',
+      '/users/:user': {templateUrl: '/partials/user.html', controller: 'HyperController'},
+      '_': '/partials/404.html'
+    };
+
+    simple.run(app, {
+      routes: routes
+    });
+    window.metric.measure('page-load', (Date.now() - start), 'ms');
+  </script>
+</body>
+</html>

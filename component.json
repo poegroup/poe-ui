@@ -1,0 +1,26 @@
+{
+  "name": "simple-ui",
+  "repo": "CamShaft/simple-ui",
+  "description": "Simple client-side apps to be used with simple-stack-ui",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "CamShaft/component-angular": "*",
+    "CamShaft/access-token": "*",
+    "CamShaft/envs": "*",
+    "CamShaft/metric-log": "*",
+    "CamShaft/log": "*",
+    "CamShaft/ng-hyper": "*",
+    "CamShaft/hyperagent": "*",
+    "CamShaft/hyper-emitter": "*",
+    "CamShaft/feature-ui": "*",
+    "component/each": "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "lib/logger.js"
+  ]
+}
