@@ -59,23 +59,26 @@ exports.run = function(app, options, loadPartial) {
 
   var routes = options.routes || {'/': 'index'};
 
+  var routeConfig = {};
+  each(routes, function(path, opts) {
+    if (typeof opts === 'string') opts = {templateUrl: opts};
+    // Require the template name
+    if (loadPartial && opts.templateUrl) opts.templateUrl = loadPartial(opts.templateUrl);
+
+    routeConfig[path] = opts;
+  });
+
   app.config([
     '$routeProvider',
     '$locationProvider',
 
     function($routeProvider, $locationProvider) {
-
-      each(routes, function(path, opts) {
-        if (typeof opts === 'string') opts = {templateUrl: opts};
-        // Require the template name
-        if (loadPartial && opts.templateUrl) opts.templateUrl = loadPartial(opts.templateUrl);
-
+      each(routeConfig, function(path, opts) {
         // Handle a catch all here
         if (path === '_') return $routeProvider.otherwise(opts);
 
         $routeProvider.when(path, opts);
       });
-
       $locationProvider.html5Mode(true).hashPrefix('!');
     }
   ]);
