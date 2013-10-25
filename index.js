@@ -1,14 +1,13 @@
 /**
- * Module dependencies
+ * Initialize the environment
  */
 
 var envs = require('envs');
+if (window.env) envs.set(window.env);
 
 /**
- * Load the environment
+ * Module dependencies
  */
-
-if (window.env) envs.set(window.env);
 
 var angular = require('angular');
 var hyper = require('ng-hyper');
@@ -38,31 +37,28 @@ exports = module.exports = function(mod, deps) {
 
 exports.run = function(app, options, loadPartial) {
 
-  /**
-   * Initialize the logger
-   */
-
+  // initialize the logger
   var log = window.metric = logger(app.name, {
     collector: options.collector || envs('SYSLOG_COLLECTOR'),
     context: options.context || {}
   });
 
-  /**
-   * Initialize the hyperagent client
-   */
-
+  // initialize the hyperagent client
   hyperagent.set(token.auth());
   hyperagent.profile = log.profile.bind(log);
 
   // TODO initialize in-progress
   // TODO initialize subscriptions
 
+  // set the default routes
   var routes = options.routes || {'/': 'index'};
 
+  // initialize the routes
+  loadPartial = options.loader || loadPartial;
   var routeConfig = {};
   each(routes, function(path, opts) {
-    if (typeof opts === 'string') opts = {templateUrl: opts};
-    // Require the template name
+    if (typeof opts === 'string') opts = {templateUrl: opts, _route: opts};
+    // load the template
     if (loadPartial && opts.templateUrl) opts.templateUrl = loadPartial(opts.templateUrl);
 
     routeConfig[path] = opts;
@@ -94,9 +90,10 @@ exports.run = function(app, options, loadPartial) {
         done = log.profile('route_time');
       });
 
-      $rootScope.$on('$routeChangeSuccess', function(currentRoute) {
+      $rootScope.$on('$routeChangeSuccess', function(currentRoute, conf) {
         if (options.analytics) analytics.pageview();
         if (currentRoute.title) $rootScope.title = currentRoute.title;
+        if (conf.$$route._route) $rootScope._route = conf.$$route._route;
         done({path: $location.path()});
       });
     }
