@@ -105,5 +105,14 @@ exports.run = function(app, options, loadPartial) {
 
   setTimeout(function() {
     featureUI(options.feature);
+    if (!window.performance && !window.performance.timing) return;
+    var t = performance.timing;
+    var timing = {
+      'measure#performance.connect': t.connectEnd - t.connectStart + 'ms',
+      'measure#performance.domain': t.domainLookupEnd - t.domainLookupStart + 'ms',
+      'measure#performance.response': t.responseEnd - t.requestStart + 'ms',
+      'measure#performance.dom': t.domComplete - t.domLoading + 'ms'
+    };
+    log(timing);
   }, 0);
 }
