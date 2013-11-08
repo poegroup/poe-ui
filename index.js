@@ -105,7 +105,8 @@ exports.run = function(app, options, loadPartial) {
 
   setTimeout(function() {
     featureUI(options.feature);
-    if (!window.performance && !window.performance.timing) return;
+
+    if (!window.performance || !window.performance.timing) return;
     var t = performance.timing;
     var timing = {
       'measure#performance.connect': t.connectEnd - t.connectStart + 'ms',
