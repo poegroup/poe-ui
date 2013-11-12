@@ -10,13 +10,13 @@ if (window.env) envs.set(window.env);
  */
 
 var angular = require('angular');
+var ngRoute = require('angular-route');
 var hyper = require('ng-hyper');
 var feature = require('ng-feature');
 var logger = require('./lib/logger');
 var hyperagent = require('hyperagent');
 var token = require('access-token');
 var each = require('each');
-var featureUI = require('feature-ui');
 
 /**
  * Expose creating an app
@@ -26,6 +26,7 @@ exports = module.exports = function(mod, deps) {
   if (!deps) return angular.module(mod);
   deps.push(hyper.name);
   deps.push(feature.name);
+  deps.push(ngRoute);
   var app = angular.module(mod, deps);
   app.name = mod;
   return app;
@@ -104,7 +105,7 @@ exports.run = function(app, options, loadPartial) {
    */
 
   setTimeout(function() {
-    featureUI(options.feature);
+    require('feature-ui')(options.feature);
 
     if (!window.performance || !window.performance.timing) return;
     var t = performance.timing;
