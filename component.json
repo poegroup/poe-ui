@@ -5,8 +5,7 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
-    "CamShaft/component-angular": "1.2.0",
-    "CamShaft/component-angular-route": "1.2.0",
+    "CamShaft/component-angular": "1.0.8",
     "CamShaft/access-token": "*",
     "CamShaft/envs": "*",
     "CamShaft/metric-log": "*",

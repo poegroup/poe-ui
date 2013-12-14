@@ -10,7 +10,6 @@ if (window.env) envs.set(window.env);
  */
 
 var angular = require('angular');
-var ngRoute = require('angular-route');
 var hyper = require('ng-hyper');
 var feature = require('ng-feature');
 var logger = require('./lib/logger');
@@ -26,7 +25,6 @@ exports = module.exports = function(mod, deps) {
   if (!deps) return angular.module(mod);
   deps.push(hyper.name);
   deps.push(feature.name);
-  deps.push(ngRoute);
   var app = angular.module(mod, deps);
   app.name = mod;
   return app;
