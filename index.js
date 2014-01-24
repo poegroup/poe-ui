@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var angular = window.angular || require('/CamShaft-component-angular');
+var angular = window.angular || require('/camshaft-component-angular');
 var hyper = require('ng-hyper');
 var feature = require('ng-feature');
 var translate = require('ng-hyper-translate');
@@ -130,6 +130,7 @@ function initHttp(app) {
       $http.defaults.transformRequest.push(function(data, get) {
         var headers = get();
         headers['Authorization'] = token.bearer();
+        headers['Accept'] = 'application/hyper+json';
         return data;
       });
     }
