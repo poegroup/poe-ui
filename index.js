@@ -142,11 +142,13 @@ function initHttp(app) {
  */
 
 function initStart(app) {
-  return function start() {
+  return function start(fn) {
     app.run([
       '$rootScope',
       '$location',
-      function($rootScope, $location) {
+      '$injector',
+      function($rootScope, $location, $injector) {
+        if (fn) fn($injector);
         $rootScope.$on('$routeChangeSuccess', function(currentRoute, conf) {
           if (currentRoute.title) $rootScope.title = currentRoute.title;
           if (conf && conf.$$route && conf.$$route._route) $rootScope._route = conf.$$route._route;
