@@ -1,16 +1,16 @@
 {
   "name": "simple-ui",
-  "repo": "CamShaft/simple-ui",
+  "repo": "camshaft/simple-ui",
   "description": "Simple client-side apps to be used with simple-stack-ui",
   "version": "0.1.0",
   "keywords": [],
   "dependencies": {
-    "CamShaft/access-token": "*",
-    "CamShaft/envs": "*",
-    "CamShaft/metric-log": "*",
-    "CamShaft/log": "*",
-    "CamShaft/ng-feature": "*",
-    "CamShaft/feature-ui": "*",
+    "camshaft/access-token": "*",
+    "camshaft/envs": "*",
+    "camshaft/metric-log": "*",
+    "camshaft/log": "*",
+    "camshaft/ng-feature": "*",
+    "camshaft/feature-ui": "*",
     "hypergroup/ng-hyper": "*",
     "hypergroup/ng-hyper-translate": "*"
   },
