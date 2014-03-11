@@ -1,0 +1,63 @@
+doctype html
+html(xmlns:ng="http://angularjs.org", data-ng-app=app, class="ng-app:" + app)#ng-app
+  head
+    base(target="_self", href=base + '/')
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    title(ng-bind="$root.title")= title
+    meta(name='description', content=description)
+    meta(name='author', content=author)
+
+    //- redirect users without JS enabled to noscript page.
+    //- NOTE: in the near future this will set a cookie indicating
+    //-       the server needs to render the page instead of the
+    //-       client; for now we redirect to an error page
+    if noscriptRedirect
+      noscript
+        meta(http-equiv="refresh", content="0; url=noscript")
+
+    //- the default setting for the viewport prevents zooming on mobile
+    //- to disable this behavior override the 'viewport' block
+    block viewport
+      meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+
+    //- add any additional meta tags with the 'meta' block
+    block meta
+
+    block styles
+      style.
+        .ng-cloak{display:none};
+      each style in styles
+        link(href=style, rel="stylesheet")
+    //- add any extra head elements with the 'head' block
+    block head
+    //- add any other needed IE shims or remove them with 'ie-shims'
+    block ie-shims
+      | <!--[if lte IE 7]>
+      script.
+        window.localStorage = false;
+        window.sessionStorage = false;
+      | <![endif]-->
+      | <!--[if lte IE 9]>
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.js")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js")
+      //- TODO minify this
+      script
+        include ./ie-fixes.js
+      script.
+        window.console = window.console || function(){};
+        window.console.log = window.console.log || function(){};
+        window.console.warn = window.console.warn || function(){};
+      | <![endif]-->
+
+  body(data-ng-controller="HyperController")
+    block body
+
+    //- TODO maybe use a script loader like headjs
+    block scripts
+      each script in scripts
+        script(src=script)
+      script.
+        require('/camshaft-envs').set(!{JSON.stringify(env)});
+        require('!{app}');

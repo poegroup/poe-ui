@@ -1,0 +1,8 @@
+extends ../node_modules/simple-stack-ui/views/layout
+
+block body
+  header(data-ng-include, src="'/partials/header.jade'")
+  .main-container
+    nav.side(data-ng-include, src="'/partials/sidenav.jade'")
+    main(data-ng-view="")
+  footer(data-ng-include, src="'/partials/footer.jade'")

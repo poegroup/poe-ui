@@ -1,0 +1,27 @@
+{
+  "repo": "REPO",
+  "name": "PROJECT",
+  "description": "DESCRIPTION",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "simple-app/simple-ui": "*",
+    "camshaft/component-angular": "NG_VERSION"
+  },
+  "development": {},
+  "main": "public/javascripts/index.js",
+  "scripts": [
+    "public/javascripts/index.js",
+    "public/javascripts/routes.js"
+  ],
+  "styles": [
+    "public/stylesheets/index.styl"
+  ],
+  "angular-templates": [
+    "public/partials/footer.jade",
+    "public/partials/header.jade",
+    "public/partials/index.jade",
+    "public/partials/sidenav.jade"
+  ],
+  "license": "MIT"
+}

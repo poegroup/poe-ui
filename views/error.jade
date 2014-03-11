@@ -1,0 +1,9 @@
+h1 Oops! We've encountered a fatal error.
+
+pre#error
+
+if process.env.NODE_ENV === 'development'
+  pre(style="background-color: red!important; color: white!important;")
+    | Hey developer!
+    | You should really make an error view so you fail more gracefully than this.
+    | Pathetic.

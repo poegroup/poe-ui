@@ -1,8 +1,8 @@
 {
   "name": "simple-ui",
   "repo": "camshaft/simple-ui",
-  "description": "Simple client-side apps to be used with simple-stack-ui",
-  "version": "0.1.0",
+  "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
+  "version": "0.3.11",
   "keywords": [],
   "dependencies": {
     "camshaft/access-token": "*",
@@ -16,10 +16,10 @@
   },
   "development": {},
   "license": "MIT",
-  "main": "index.js",
+  "main": "client.js",
   "scripts": [
-    "index.js",
-    "lib/logger.js"
+    "client.js",
+    "client/logger.js"
   ],
   "remotes": []
 }

@@ -1,0 +1,9 @@
+'public/stylesheets': '@make build/style.css'
+'public/javascripts': '@make build/app.js'
+'public/partials': '@make build/app.js'
+'components': '@touch component.json && make build/vendor.js build/style.css'
+'build/style.css':
+'build/vendor.js':
+'build/app.js':
+'views':
+

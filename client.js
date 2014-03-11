@@ -6,7 +6,7 @@ var angular = window.angular || require('/camshaft-component-angular');
 var hyper = require('ng-hyper');
 var feature = require('ng-feature');
 var translate = require('ng-hyper-translate');
-var logger = require('./lib/logger');
+var logger = require('./client/logger');
 var token = require('access-token');
 var envs = require('envs');
 
