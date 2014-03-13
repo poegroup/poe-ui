@@ -10,6 +10,7 @@ Getting Started
 $ mkdir my-new-project
 $ cd my-new-project
 $ npm install simple-ui
+$ npm init
 $ touch Makefile
 ```
 
