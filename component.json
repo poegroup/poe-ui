@@ -1,8 +1,8 @@
 {
   "name": "simple-ui",
-  "repo": "camshaft/simple-ui",
+  "repo": "simple-app/simple-ui",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "keywords": [],
   "dependencies": {
     "camshaft/access-token": "*",
