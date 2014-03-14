@@ -5,6 +5,7 @@
   "author": "",
   "main": "app.js",
   "scripts": {
+    "start": "./node_modules/.bin/startup start",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha"
   },
   "repository": {
@@ -16,7 +17,7 @@
     "npm": "1.x.x"
   },
   "dependencies": {
-    "simple-stack-ui": "~0.3.11",
+    "simple-ui": "~0.3.11",
     "startup": "~0.3.0",
     "envs": "~0.1.4",
     "shoelace-stylus": "git+https://github.com/shoelace-ui/stylus.git"

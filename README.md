@@ -20,6 +20,8 @@ PROJECT=my-new-project
 DESCRIPTION=This is a really great app!
 ORGANIZATION=my-github-org
 
+STYLE_BUILDER=$(CURDIR)/node_modules/shoelace-stylus
+
 include ./node_modules/simple-ui/tasks.mk
 ```
 
