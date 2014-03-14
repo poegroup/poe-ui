@@ -34,16 +34,6 @@ exports = module.exports = function(opts) {
   var SITE_URL = opts.siteUrl || envs('SITE_URL');
   var ENABLED_FEATURES = opts.enabledFeatures || envs('ENABLED_FEATURES') || '';
 
-  // Load in the routes
-  if (!opts.routes) {
-    try {
-      opts.routes = require(root + '/public/javascripts/routes');
-    } catch (e) {
-      opts.routes = {'/': 'index'};
-    }
-  }
-  var routes = Object.keys(opts.routes);
-
   // Load the package.json
   var package = {};
   try {
@@ -159,7 +149,7 @@ exports = module.exports = function(opts) {
 
   app.useBefore('router', '/', 'features', function(req, res, next) {
     if (req.get('x-env') !== 'production') return next();
-    if (ENABLED_FEATURES !== req.cookies.features) res.cookie('features', ENABLED_FEATURES);
+    if (ENABLED_FEATURES && ENABLED_FEATURES !== req.cookies.features) res.cookie('features', ENABLED_FEATURES);
     next();
   });
 
@@ -187,11 +177,23 @@ exports = module.exports = function(opts) {
     });
   });
 
+  // Load in the routes
+  var routes = opts.routes;
+  if (!routes) {
+    try {
+      routes = require(root + '/public/javascripts/routes');
+    } catch (e) {
+      routes = {'/': 'index'};
+    }
+  }
+
+  uiApi(app, routes);
+
   /**
    * Mount the routes
    */
 
-  routes.forEach(function(route) {
+  Object.keys(routes).forEach(function(route) {
     app.get(route, index);
   });
 
@@ -199,7 +201,7 @@ exports = module.exports = function(opts) {
    * Index
    */
 
-  function index(req, res, next){
+  function index(req, res, next) {
     // If we don't have the site url set, get it from the header or env
     if (!res.locals.site) res.locals.site = req.get('x-ui-url') || SITE_URL || req.base;
 
@@ -213,7 +215,7 @@ exports = module.exports = function(opts) {
 
       res.render(app.get('index view') || 'index');
     });
-  };
+  }
 
   return app;
 };
@@ -223,3 +225,100 @@ exports = module.exports = function(opts) {
  */
 
 stack.middleware(exports.middleware = {});
+
+/**
+ * Mount the api for the ui
+ */
+
+function uiApi(app, routes) {
+  var regexp = /:([\w-\.]+)/g;
+
+  app.get('/_', function(req, res) {
+    var body = {
+      href: req.base + '/_',
+      routes: {}
+    };
+    Object.keys(routes).forEach(function(route) {
+      var conf = routes[route];
+      if (typeof conf === 'string') conf = {template: conf};
+      var name = conf.template;
+      var form = body.routes[name] = {
+        action: req.base + '/_/routes',
+        method: 'GET',
+        input: {
+          _template: {
+            type: 'hidden',
+            value: route
+          }
+        }
+      };
+      var input = form.input;
+
+      (route.match(regexp) || []).forEach(function(param) {
+        input[param.substr(1)] = {
+          type: 'text'
+        };
+      });
+    });
+    res.json(body);
+  });
+
+  app.get('/_/routes', function(req, res) {
+    var template = req.query._template;
+    if (template === '/') template = '';
+    var values = req.query;
+    var missing = [];
+    var warnings = [];
+
+    var body = {
+      href: req.base + req.url
+    };
+
+    var baseObj = urlparse(req.base);
+
+    var result = req.base + template.replace(regexp, function(full, param) {
+      var href = values[param];
+      if (values.hasOwnProperty(param)) {
+        var warn = validateHref(href, baseObj, param);
+        if (warn) warnings.push(warn);
+        return websafe(href);
+      }
+      missing.push(param);
+      return '-';
+    });
+
+    if (missing.length) {
+      body.error = {
+        message: 'Missing arguments',
+        missing: missing
+      };
+    } else {
+      body.url = result;
+    }
+
+    if (warnings.length) {
+      body.warnings = warnings;
+    }
+
+    res.json(body);
+  });
+
+  function validateHref(href, base, param) {
+    if (href.indexOf('http') !== 0 && href.indexOf('/') !== 0) return '"' + href + '" passed as "' + param + '" doesn\'t look like a url. It should start with "http(s)" or "/"'
+    var obj = urlparse(href);
+    if (obj.host && base.host !== obj.host) return '"' + href + '" passed as "' + param + '" may have CORS problems';
+    if (obj.protocol && base.protocol !== obj.protocol) return '"' + href + '" passed as "' + param  + '" may have protocol mismatch problems';
+  }
+}
+
+/**
+ * Websafe encode a string
+ */
+
+function websafe(str) {
+  return (new Buffer(str))
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+}
