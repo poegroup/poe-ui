@@ -17,7 +17,7 @@
     "npm": "1.x.x"
   },
   "dependencies": {
-    "simple-ui": "~0.3.11",
+    "simple-ui": "~0.3.13",
     "startup": "~0.3.0",
     "envs": "~0.1.4",
     "shoelace-stylus": "git+https://github.com/shoelace-ui/stylus.git"
