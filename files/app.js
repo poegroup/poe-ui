@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var stack = require('simple-stack-ui');
+var stack = require('simple-ui');
 var envs = require('envs');
 
 /**
