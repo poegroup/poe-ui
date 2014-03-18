@@ -1,0 +1,43 @@
+#!/bin/bash
+
+ready=/tmp/simple-server-ready-$RANDOM.tmp
+mkfifo $ready
+
+done=/tmp/simple-server-test-$RANDOM.tmp
+mkfifo $done
+
+# start the server
+(
+  port=5000
+  PORT=$port foreman start | \
+  while read line; do
+    # total hack here. FIX THIS
+    echo $line | grep -q 'ERROR' && { echo $line; echo '1' >$done; }
+    echo $line | grep -q 'Server' && echo "http://localhost:$port" >$ready
+  done
+) &
+
+# wait for the server to start and run phantom
+(
+  read url <$ready
+  phantomjs smoke-test.js $url
+  echo $? >$done
+) &
+
+# set the status code
+cleanup() {
+  echo "done with status $1"
+  rm -f $ready $done
+  exit "$1"
+}
+
+# make sure all children DIE
+trap 'kill 0' EXIT
+
+# handle graceful exits
+trap 'cleanup 0' SIGINT SIGKILL
+
+# wait for an exit status from the tests
+read status <$done
+
+cleanup $status
