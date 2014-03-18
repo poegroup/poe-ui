@@ -9,7 +9,7 @@ mkfifo $done
 # start the server
 (
   port=5000
-  PORT=$port foreman start | \
+  PORT=$port make start | \
   while read line; do
     # total hack here. FIX THIS
     echo $line | grep -q 'ERROR' && { echo $line; echo '1' >$done; }
@@ -20,7 +20,7 @@ mkfifo $done
 # wait for the server to start and run phantom
 (
   read url <$ready
-  phantomjs smoke-test.js $url
+  phantomjs $1 $url
   echo $? >$done
 ) &
 

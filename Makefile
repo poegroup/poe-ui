@@ -5,11 +5,12 @@ build: components index.js
 components: component.json
 	@component install
 
-test: build test/build
-	@cd test && serve
+test: test-cli
 
-test/build:
-	@ln -s build $@
+test-cli: test-cli-create
+
+test-cli-create:
+	@./test/cli/create
 
 clean:
 	rm -fr build components template.js

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+simple="`pwd`"
+
+dir=/tmp/simple-app-ui-$RANDOM
+echo $dir
+mkdir -p $dir
+
+cleanup() {
+  rm -rf $dir
+}
+
+trap 'cleanup' EXIT
+
+cd $dir
+
+SIMPLE_UI=$simple $simple/bin/simple-ui-create <<EOF
+my-test-app
+This is a description
+simple-app
+EOF
+
+$simple/test/cli/smoke-test $simple/test/cli/smoke-test.js

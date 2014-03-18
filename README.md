@@ -1,4 +1,4 @@
-simple-ui
+simple-ui [![Build Status](https://travis-ci.org/simple-app/simple-ui.png)](https://travis-ci.org/simple-app/simple-ui)
 =========
 
 `simple-ui` is a high-productivity collection of tools and practices for rapidly writing production-ready applications.

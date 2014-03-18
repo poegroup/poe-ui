@@ -1,0 +1,40 @@
+#!/bin/bash
+
+check() {
+  hash $1 2>/dev/null || { echo >&2 "This needs \`$1\` to function properly. Please consule the simple-ui readme for more info."; exit 1; }
+}
+
+check git
+check npm
+check make
+
+PROJECT=`pwd | xargs basename`
+DESCRIPTION='A simple app'
+ORGANIZATION=`git config --get user.name`
+
+read -e -p "project: ($PROJECT) " input
+PROJECT="${input:-$PROJECT}"
+
+read -e -p "description: ($DESCRIPTION) " input
+DESCRIPTION="${input:-$DESCRIPTION}"
+
+read -e -p "organization: ($ORGANIZATION) " input
+ORGANIZATION="${input:-$ORGANIZATION}"
+
+MAKEFILE="
+PROJECT=$PROJECT
+DESCRIPTION=$DESCRIPTION
+ORGANIZATION=$ORGANIZATION
+
+STYLE_BUILDER=\$(CURDIR)/node_modules/shoelace-stylus
+
+include ./node_modules/simple-ui/tasks.mk
+"
+
+echo "$MAKEFILE" > ./Makefile
+
+npm install ${SIMPLE_UI:-simple-ui} || exit 1;
+
+mkdir -p public
+
+make init build

@@ -40,6 +40,12 @@ build   : install lint build/require.js build/app.js build/style.css build/vendo
 prod    : build build/require.min.js build/app.min.js build/style.min.css build/vendor.min.js manifest.json
 install : node_modules components
 
+start: build .env
+	@foreman start
+
+.env: .env.example
+	@cp $< $@
+
 node_modules: package.json
 	@npm install
 
