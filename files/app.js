@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var stack = require('simple-ui');
+var stack = require('poe-ui');
 var envs = require('envs');
 
 /**

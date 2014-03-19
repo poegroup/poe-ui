@@ -11,7 +11,7 @@ var token = require('access-token');
 var envs = require('envs');
 
 /**
- * Create a simple-ui app
+ * Create a poe-ui app
  *
  * @param {String} mod
  * @param {Array} deps
@@ -21,7 +21,7 @@ var envs = require('envs');
 
 exports = module.exports = function(mod, deps, $require) {
   if (!deps) return angular.module(mod);
-  if (!$require) throw new Error('simple-ui requires passing the require function on creation');
+  if (!$require) throw new Error('poe-ui requires passing the require function on creation');
 
   deps.push(hyper.name);
   deps.push(translate.name);

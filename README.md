@@ -1,7 +1,7 @@
-simple-ui [![Build Status](https://travis-ci.org/simple-app/simple-ui.png)](https://travis-ci.org/simple-app/simple-ui)
+poe-ui [![Build Status](https://travis-ci.org/poegroup/poe-ui.png)](https://travis-ci.org/poegroup/poe-ui)
 =========
 
-`simple-ui` is a high-productivity collection of tools and practices for rapidly writing production-ready applications.
+`poe-ui` is a high-productivity collection of tools and practices for rapidly writing production-ready applications.
 
 Getting Started
 ---------------
@@ -9,7 +9,7 @@ Getting Started
 ```sh
 $ mkdir my-new-project
 $ cd my-new-project
-$ npm install simple-ui
+$ npm install poe-ui
 $ touch Makefile
 ```
 
@@ -22,7 +22,7 @@ ORGANIZATION=my-github-org
 
 STYLE_BUILDER=$(CURDIR)/node_modules/shoelace-stylus
 
-include ./node_modules/simple-ui/tasks.mk
+include ./node_modules/poe-ui/tasks.mk
 ```
 
 Once the `Makefile` is initialized, run:

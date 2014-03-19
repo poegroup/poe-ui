@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
-    "simple-app/simple-ui": "*",
+    "poegroup/poe-ui": "*",
     "camshaft/component-angular": "NG_VERSION"
   },
   "development": {},

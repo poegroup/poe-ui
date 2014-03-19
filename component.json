@@ -1,6 +1,6 @@
 {
-  "name": "simple-ui",
-  "repo": "simple-app/simple-ui",
+  "name": "poe-ui",
+  "repo": "poegroup/poe-ui",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
   "version": "0.3.14",
   "keywords": [],

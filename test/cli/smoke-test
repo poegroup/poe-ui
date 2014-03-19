@@ -1,9 +1,9 @@
 #!/bin/bash
 
-ready=/tmp/simple-server-ready-$RANDOM.tmp
+ready=/tmp/poe-server-ready-$RANDOM.tmp
 mkfifo $ready
 
-done=/tmp/simple-server-test-$RANDOM.tmp
+done=/tmp/poe-server-test-$RANDOM.tmp
 mkfifo $done
 
 # start the server

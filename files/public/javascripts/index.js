@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var app = module.exports = require('simple-ui')('PROJECT', [], require);
+var app = module.exports = require('poe-ui')('PROJECT', [], require);
 
 /**
  * Initialize partials
