@@ -22,4 +22,5 @@ This is a description
 poe-app
 EOF
 
+
 $poe/test/cli/smoke-test $poe/test/cli/smoke-test.js
