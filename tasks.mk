@@ -12,7 +12,7 @@ PARTIAL_FILES = $(shell find public -type f -name '*.jade')
 POE_UI         = $(CURDIR)/node_modules/poe-ui
 POE_UI_BIN     = $(POE_UI)/node_modules/.bin
 COMP_FILTER	  = $(POE_UI)/node_modules/component-filter
-STYLE_BUILDER    ?= $(POE_UI)/node_modules/shoelace-component
+STYLE_BUILDER    ?= $(POE_UI)/node_modules/shoelace-stylus
 
 DIRS  = $(shell find $(POE_UI)/files -type d -name '*[a-zA-Z]' | sed 's:^$(POE_UI)/files/::')
 FILES = $(shell find $(POE_UI)/files -type f                   | sed 's:^$(POE_UI)/files/::')

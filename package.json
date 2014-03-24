@@ -1,5 +1,8 @@
 {
   "name": "poe-ui",
+  "bin": {
+    "poe-ui-create": "bin/poe-ui-create"
+  },
   "version": "0.3.14",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
   "main": "server.js",
@@ -27,9 +30,9 @@
     "jshint": "~2.3.0",
     "uglify-js": "~2.4.0",
     "nghtml": "~0.2.0",
+    "shoelace-stylus": "~1.1.5",
     "component": "~0.19.3",
     "component-builder": "~0.11.2",
-    "shoelace-component": "~0.1.0",
     "component-filter": "~0.1.0",
     "component-require": "~0.3.1"
   }
