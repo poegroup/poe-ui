@@ -19,7 +19,7 @@
   "dependencies": {
     "poe-ui": "~0.3.13",
     "startup": "~0.3.0",
-    "envs": "~0.1.4",
+    "envs": "~0.1.4"
   },
   "devDependencies": {
     "mocha": "*",

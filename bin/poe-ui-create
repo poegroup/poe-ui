@@ -22,8 +22,6 @@ read -e -p "organization: ($ORGANIZATION) " input
 ORGANIZATION="${input:-$ORGANIZATION}"
 
 MAKEFILE="
-STYLE_BUILDER=\$(CURDIR)/node_modules/shoelace-stylus
-
 include ./node_modules/poe-ui/tasks.mk
 "
 
