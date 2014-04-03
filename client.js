@@ -57,8 +57,8 @@ function initRoutes(app, $require) {
   // we have to require the partials before the config runs
   var config = {};
   angular.forEach(routes, function(opts, path) {
-    if (angular.isString(opts)) opts = {templateUrl: opts, _route: opts};
-    if (opts.templateUrl) opts.templateUrl = app.initPartial(opts.templateUrl);
+    if (angular.isString(opts)) opts = {view: opts, _route: opts};
+    if (opts.view) opts.templateUrl = app.initPartial(opts.view);
     config[path] = opts;
   });
 
