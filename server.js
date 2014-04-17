@@ -53,6 +53,27 @@ exports = module.exports = function(opts) {
   // init the ui api
   api(app, routes);
 
+  // init the lr server
+  if (envs('NODE_ENV') !== 'development') return app;
+
+  var LR = require('lr');
+  var lr = new LR();
+  app.use('/livereload.js', lr.client());
+  app.on('ready', function(server) {
+    lr.attach(server);
+  });
+
+  lr.watch('public/stylesheets/*', 'make build/style.css', true);
+  lr.watch('public/!(stylesheets)/*', 'make build');
+  lr.watch('components/**', 'rm build/vendor.js && make build/vendor.js && touch public/stylesheets/index.styl');
+  lr.watch('component.json', 'make');
+  lr.watch('views/**');
+  lr.watch('build/style.css');
+
+  lr.start(function(path) {
+    console.log('[LR]', path);
+  });
+
   return app;
 };
 

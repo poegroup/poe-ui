@@ -62,9 +62,6 @@ html(xmlns:ng="http://angularjs.org", data-ng-app=app, class="ng-app:" + app)#ng
         require('/camshaft-envs').set(!{JSON.stringify(env)});
         require('!{app}');
 
-    //- this is crazy hacky, but it initializes livereload without
-    //- browser extensions and across all devices.
-    //- http://feedback.livereload.com/knowledgebase/articles/86180-how-do-i-add-the-script-tag-manually-
-    if env.BROWSER_ENV === "development"
+    if process.env.NODE_ENV === "development"
       script.
-        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+        document.write('<script src="!{base}/livereload.js?snipver=1"></' + 'script>')
