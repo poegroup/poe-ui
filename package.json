@@ -7,7 +7,7 @@
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha test/*/*.test.js"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
