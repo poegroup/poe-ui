@@ -19,7 +19,9 @@ describe('cli', function() {
   });
 
   afterEach(function(fn) {
-    rimraf(dir, fn);
+    rimraf(dir, function() {
+      fn();
+    });
   });
 
   it('should create a working application', function(done) {
