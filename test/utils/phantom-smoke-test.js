@@ -33,7 +33,7 @@ page.onInitialized = function() {
 var errors = [];
 
 page.onConsoleMessage = function(msg, lineNum, sourceId) {
-  if (~msg.match(/error/i)) errors.push(msg);
+  if (msg.match(/error/i)) errors.push(msg);
 };
 
 page.onError = function(msg, trace) {
@@ -52,16 +52,13 @@ page.onResourceError = function(err) {
   errors.push(err.errorString);
 };
 
-page.onLoadFinished = function(status) {
-  if (!errors.length) return phantom.exit(0);
-  errors.forEach(function(err) {
-    console.error(err);
-  });
-  phantom.exit(1);
-};
-
 var address = system.args[1];
 
-page.open(address, function() {
-  // phantom.exit();
+page.open(address, function(status) {
+  if (status !== 'success') phantom.exit(1);
+  if (!errors.length) return phantom.exit(0);
+  errors.forEach(function(err) {
+    system.stderr.writeLine(err);
+  });
+  phantom.exit(1);
 });

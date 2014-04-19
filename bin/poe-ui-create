@@ -27,8 +27,14 @@ include ./node_modules/poe-ui/tasks.mk
 
 echo "$MAKEFILE" > ./Makefile
 
+SILENT="--silent"
+
+if [ -n "$POE_VERBOSE" ]; then
+  SILENT=""
+fi
+
 echo 'Installing dependencies. This may take awhile.'
-npm install ${POE_UI:-poe-ui} --silent || exit 1;
+npm install ${POE_UI:-poe-ui} $SILENT || exit 1;
 
 mkdir -p public
 
