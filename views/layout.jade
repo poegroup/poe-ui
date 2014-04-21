@@ -2,7 +2,7 @@ doctype html
 html(xmlns:ng="http://angularjs.org", data-ng-app=app, class="ng-app:" + app)#ng-app
   head
     base(target="_self", href=base + '/')
-    meta(charset='utf-8')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     title(ng-bind="$root.title")= title
     meta(name='description', content=description)
