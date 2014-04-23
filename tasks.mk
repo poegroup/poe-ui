@@ -2,7 +2,7 @@ PROJECT      ?= $(notdir $(CURDIR))
 DESCRIPTION  ?= A poe ui app
 ORGANIZATION ?= $(PROJECT)
 REPO         ?= $(ORGANIZATION)/$(PROJECT)
-NG_VERSION   ?= *
+NG_VERSION   ?= 1.0.8
 
 POE_UI := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 PATH := $(POE_UI)/node_modules/.bin:$(PATH)

@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var angular = window.angular || require('/camshaft-component-angular');
+var angular = window.angular;
 var hyper = require('ng-hyper');
 var feature = require('ng-feature');
 var translate = require('ng-hyper-translate');
@@ -11,54 +11,150 @@ var token = require('access-token');
 var envs = require('envs');
 
 /**
- * Create a poe-ui app
- *
- * @param {String} mod
- * @param {Array} deps
- * @param {Function} require
- * @return Module
+ * setup different types of methods
  */
 
-exports = module.exports = function(mod, deps, $require) {
-  if (!deps) return angular.module(mod);
-  if (!$require) throw new Error('poe-ui requires passing the require function on creation');
+var TYPES = [
+  'view',
+  'directive',
+  'controller',
+  'service'
+];
 
-  deps.push(hyper.name);
-  deps.push(translate.name);
-  deps.push(feature.name);
+/**
+ * Expose App constructor
+ */
 
-  var app = angular.module(mod, deps);
-  app.name = mod;
+exports = module.exports = App;
 
-  app.initPartial = initRequire('../partials/', $require);
-  initRoutes(app, $require);
+/**
+ * Initialize a poe-ui app
+ *
+ * @param {String} name
+ */
 
-  app.initDirective = initRequire('./directives/', $require, app);
-  app.initController = initRequire('./controllers/', $require, app);
-  app.initFilter = initRequire('./filters/', $require, app);
-  app.initService = initRequire('./services/', $require, app);
+function App(name) {
+  if (!(this instanceof App)) return new App(name);
 
-  app.metric = initMetric(app);
-  // TODO init analytics
-  initHttp(app);
+  var self = this;
+  self.name = name;
+  self.deps = [hyper.name, translate.name, feature.name];
+  self.configures = [cachePartials(this)];
+  types(function(type) {
+    self[type + 's'] = {};
+  });
+}
 
-  app.start = initStart(app, $require);
+/**
+ * Use a plugin
+ *
+ * @param {String|Object|Function} dep
+ */
 
-  return app;
+App.prototype.use = function(dep) {
+  if (typeof dep === 'function') return dep(this);
+  if (dep.name) return this.deps.push(dep.name);
+  this.deps.push(dep);
 };
+
+/**
+ * Load the routes
+ *
+ * @param {Object} routes
+ */
+
+App.prototype.routes = function(routes) {
+  this.routes = routes;
+};
+
+/**
+ * Add a configure function
+ *
+ * @param {Function} fn
+ */
+
+App.prototype.configure = function(fn) {
+  this.configures.push(fn);
+};
+
+/**
+ * Start the application
+ *
+ * @param {Object} scope
+ * @param {Function} fn
+ */
+
+App.prototype.start = function(scope, fn) {
+  var self = this;
+  var mod = self.module = angular.module(self.name, self.deps);
+  mod.name = self.name;
+
+  envs.set(scope);
+
+  types(function(type) {
+    if (type === 'view') return;
+    var confs = self[type + 's'];
+    angular.forEach(function(conf, name) {
+      if (typeof conf === 'function') return conf(mod);
+      mod[type](name, conf);
+    });
+  });
+
+  initRoutes(mod, self.routes, self.views, self.controllers);
+  initHttp(mod);
+
+  if (fn) self.configures.push(fn);
+
+  start(mod, self);
+
+  angular.bootstrap(document, [self.name]);
+
+  return mod;
+};
+
+/**
+ * Setup the type registration methods
+ */
+
+types(function(type) {
+  var plural = type + 's';
+  App.prototype[type] = function(name, conf) {
+    if (type === 'controller') name = toController(name);
+    if (type === 'view') this[plural][name.replace('.jade', '')] = conf;
+    this[plural][name] = conf;
+  };
+});
+
+/**
+ * Iterate over the supported types
+ */
+
+function types(fn) {
+  angular.forEach(TYPES, fn);
+}
+
+/**
+ * Convert a view name to PascalCase
+ */
+
+function toController(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1) + 'Controller';
+}
 
 /**
  * Initialize routes
  */
 
-function initRoutes(app, $require) {
-  var routes = $require('./routes');
-
+function initRoutes(app, routes, partials, controllers) {
   // we have to require the partials before the config runs
   var config = {};
-  angular.forEach(routes, function(opts, path) {
+  angular.forEach(routes || {}, function(opts, path) {
     if (angular.isString(opts)) opts = {view: opts, _route: opts};
-    if (opts.view) opts.templateUrl = app.initPartial(opts.view);
+    if (opts.view) {
+      opts.template = partials[opts.view] || partials['/partials/' + opts.view];
+      var controller = toController(opts.view);
+      if (controllers[controller]) opts.controller = controller;
+    }
     config[path] = opts;
   });
 
@@ -73,44 +169,18 @@ function initRoutes(app, $require) {
       $location.html5Mode(true).hashPrefix('!');
     }
   ]);
-  return routes;
 }
 
 /**
- * Helper function for creating initializers
+ * Initialize partials
  */
 
-function initRequire(prefix, $require, app) {
-  return function(path) {
-    var mod = $require(prefix + path);
-    if (app) return mod(app);
-    return mod;
-  };
-}
-
-/**
- * Initialize performance metrics
- *
- * @todo
- */
-
-function initMetric(app) {
-  var log = logger(app.name, {
-    collector: envs('SYSLOG_COLLECTOR')
-  });
-
-  return log;
-}
-
-/**
- * Initialize business metrics
- *
- * @todo
- */
-
-function initAnalytics() {
-  return {
-    pageview: function() {}
+function cachePartials(app) {
+  return function($injector) {
+    var cache = $injector.get('$templateCache');
+    angular.forEach(app.views, function(view, name) {
+      cache.put(name, view);
+    });
   };
 }
 
@@ -141,24 +211,24 @@ function initHttp(app) {
  * Initialize start function
  */
 
-function initStart(app) {
-  return function start(fn) {
-    app.run([
-      '$rootScope',
-      '$location',
-      '$injector',
-      function($rootScope, $location, $injector) {
-        if (fn) fn($injector);
-        $rootScope.$on('$routeChangeSuccess', function(currentRoute, conf) {
-          if (currentRoute.title) $rootScope.title = currentRoute.title;
-          if (conf && conf.$$route && conf.$$route._route) $rootScope._route = conf.$$route._route;
-        });
-      }
-    ]);
+function start(mod, app) {
+  mod.run([
+    '$rootScope',
+    '$location',
+    '$injector',
+    function($rootScope, $location, $injector) {
+      angular.forEach(app.configures, function(fn) {
+        fn($injector);
+      });
+      $rootScope.$on('$routeChangeSuccess', function(currentRoute, conf) {
+        if (currentRoute.title) $rootScope.title = currentRoute.title;
+        if (conf && conf.$$route && conf.$$route._route) $rootScope._route = conf.$$route._route;
+      });
+    }
+  ]);
 
-    // show the feature UI
-    setTimeout(function() {
-      require('feature-ui')();
-    }, 10);
-  };
+  // show the feature UI
+  setTimeout(function() {
+    require('feature-ui')();
+  }, 10);
 }

@@ -2,18 +2,19 @@
  * Module dependencies
  */
 
-var app = module.exports = require('poe-ui')('PROJECT', [], require);
+var App = require('poe-ui');
 
 /**
- * Initialize partials
+ * Expose the app
  */
 
-app.initPartial('header');
-app.initPartial('footer');
-app.initPartial('sidenav');
+var app = module.exports = App('PROJECT');
 
 /**
- * Start app
+ * Load plugins here
+ *
+ * Plugins are loaded with the 'use' method:
+ *
+ *   app.use(require('modal'));
+ *
  */
-
-app.start();

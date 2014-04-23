@@ -1,3 +1,2 @@
 web: ./node_modules/.bin/startup start
 debug: ./node_modules/.bin/startup start --debug
-reload: ./node_modules/.bin/lr --config ./node_modules/poe-ui/lr.yml
