@@ -9,6 +9,8 @@ PATH := $(POE_UI)/node_modules/.bin:$(PATH)
 
 include $(POE_UI)/node_modules/poe-ui-kit/build.mk
 
+ifeq ($(MAKECMDGOALS),init)
+
 DIRS  = $(shell find $(POE_UI)/files -type d -name '*[a-zA-Z]' | sed 's:^$(POE_UI)/files/::')
 FILES = $(shell find $(POE_UI)/files -type f                   | sed 's:^$(POE_UI)/files/::')
 
@@ -27,3 +29,6 @@ $(FILES):
 		$(POE_UI)/files/$@ > $@
 
 .PHONY: init init_install
+
+endif
+
