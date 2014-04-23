@@ -94,7 +94,7 @@ App.prototype.start = function(scope, fn) {
   types(function(type) {
     if (type === 'view') return;
     var confs = self[type + 's'];
-    angular.forEach(function(conf, name) {
+    angular.forEach(confs, function(conf, name) {
       if (typeof conf === 'function') return conf(mod);
       mod[type](name, conf);
     });
