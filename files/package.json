@@ -17,9 +17,9 @@
     "npm": "1.x.x"
   },
   "dependencies": {
-    "poe-ui": "~0.4.0",
-    "startup": "~0.3.0",
-    "envs": "~0.1.4"
+    "poe-ui": "^0.4.1",
+    "startup": "^0.3.0",
+    "envs": "^0.1.4"
   },
   "devDependencies": {
     "mocha": "*",
