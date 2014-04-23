@@ -163,7 +163,8 @@ function initLR(app) {
     return;
   };
 
-  var lr = new LR();
+  var lr = new LR(null, false);
+
   app.use('/livereload.js', lr.client());
   app.on('ready', function(server) {
     lr.attach(server);
@@ -177,6 +178,6 @@ function initLR(app) {
   lr.watch('build/style.css');
 
   lr.start(function(path) {
-    console.log('[LR]', path);
+    lr.log && lr.log(path);
   });
 }
