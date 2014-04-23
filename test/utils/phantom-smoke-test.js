@@ -54,7 +54,10 @@ page.onResourceError = function(err) {
 
 var address = system.args[1];
 
+console.log('[phantom]', 'opening', address, 'in headless browser');
+
 page.open(address, function(status) {
+  console.log('[phantom]', 'page status', status);
   if (status !== 'success') phantom.exit(1);
   if (!errors.length) return phantom.exit(0);
   errors.forEach(function(err) {

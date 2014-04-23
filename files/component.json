@@ -5,10 +5,9 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
-    "poegroup/poe-ui": "*",
+    "poegroup/poe-ui": "0.3.17",
     "camshaft/component-angular": "NG_VERSION"
   },
   "development": {},
-  "main": "public/javascripts/index.js",
   "license": "MIT"
 }

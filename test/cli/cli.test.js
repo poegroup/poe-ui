@@ -47,33 +47,33 @@ describe('cli', function() {
       linkClient(dir, function(err) {
         if (err) return done(err);
 
-      openport(function(err, port) {
-        if (err) return done(err);
-        var error, started;
-        var env = merge({PORT: port}, process.env);
+        openport(function(err, port) {
+          if (err) return done(err);
+          var error, started;
+          var env = merge({PORT: port}, process.env);
 
-        var server = spawn('make', ['start'], {env: env, cwd: dir});
+          var server = spawn('make', ['start'], {env: env, cwd: dir});
 
-        function smokeTest() {
-          started = true;
-          smoke('http://localhost:' + port, function(err) {
-            error = err;
-            server.kill();
+          function smokeTest() {
+            started = true;
+            smoke('http://localhost:' + port, function(err) {
+              error = err;
+              server.kill();
+            });
+          }
+
+          server.stdout.on('data', function(data) {
+            process.stdout.write(data);
+            if (~data.toString().indexOf('Server listening')) smokeTest();
           });
-        }
 
-        server.stdout.on('data', function(data) {
-          if (~data.toString().indexOf('Server listening')) smokeTest();
+          server.on('close', function(status) {
+            if (error) return done(error);
+            if (started) return done();
+            if (status !== 0) return done(new Error('exited with ' + status));
+            done(new Error('Failed'));
+          });
         });
-
-        server.on('close', function(status) {
-          if (error) return done(error);
-          if (started) return done();
-          if (status !== 0) return done(new Error('exited with ' + status));
-          done(new Error('Failed'));
-        });
-      });
-
       });
     });
   });
@@ -81,14 +81,12 @@ describe('cli', function() {
 
 function linkClient(dir, fn) {
   var root = process.cwd();
-  var target = dir + '/components/poegroup-poe-ui';
-  rimraf(target, function(err) {
-    fs.symlink(root, target, function(err) {
+  console.log('linking', root, 'to', dir);
+  exec(root + '/node_modules/.bin/component link ' + root, {cwd: dir}, function(err) {
+    if (err) return fn(err);
+    rimraf(dir + '/build/vendor.js', function(err) {
       if (err) return fn(err);
-      rimraf(dir + '/build/vendor.js', function(err) {
-        if (err) return fn(err);
-        exec('make build', {cwd: dir}, fn);
-      });
+      exec('make build', {cwd: dir}, fn);
     });
   });
 }

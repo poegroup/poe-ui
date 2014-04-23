@@ -53,6 +53,9 @@ exports = module.exports = function(opts) {
   // init the ui api
   api(app, routes);
 
+  // load livereload in dev
+  initLR(app);
+
   return app;
 };
 
@@ -66,6 +69,8 @@ exports.middleware = stack.middleware;
  */
 
 function initAuth(app, conf) {
+  if (!envs('OAUTH_CLIENT_ID')) return app.restrict = function() {return function(req, res, next) {next();}};
+
   var auth = oauth(conf);
   app.useBefore('router', '/auth/login', 'auth:login', auth.login());
   app.useBefore('router', '/auth/register', 'auth:register', auth.login({register: 1}));
@@ -141,5 +146,37 @@ function initRoute(app, conf, restrict) {
     // Expose the base url to the view
     res.locals.base = req.base;
     res.render(app.get('index view') || 'index');
+  });
+}
+
+/**
+ * Initialize LR server
+ */
+
+function initLR(app) {
+  // init the lr server
+  if (envs('NODE_ENV') !== 'development' || envs('DISABLE_LR')) return;
+
+  try {
+    var LR = require(process.cwd() + '/node_modules/lr');
+  } catch(err) {
+    return;
+  };
+
+  var lr = new LR();
+  app.use('/livereload.js', lr.client());
+  app.on('ready', function(server) {
+    lr.attach(server);
+  });
+
+  lr.watch('public/stylesheets/*', 'make build/style.css', true);
+  lr.watch('public/!(stylesheets)/*', 'make build');
+  lr.watch('components/**', 'rm -f build/vendor.js && make build/vendor.js && touch public/stylesheets/index.styl');
+  lr.watch('component.json', 'make');
+  lr.watch('views/**');
+  lr.watch('build/style.css');
+
+  lr.start(function(path) {
+    console.log('[LR]', path);
   });
 }
