@@ -19,7 +19,7 @@
     "url": "https://github.com/poegroup/poe-ui/issues"
   },
   "dependencies": {
-    "poe-ui-kit": "~0.2.0",
+    "poe-ui-kit": "^0.2.1",
     "envs": "~0.1.1",
     "passport": "~0.1.17",
     "passport-oauth2": "~1.1.1",
