@@ -165,7 +165,7 @@ function initLR(app) {
 
   var lr = new LR(null, false);
 
-  app.use('/livereload.js', lr.client());
+  app.useBefore('router', '/livereload.js', lr.client());
   app.on('ready', function(server) {
     lr.attach(server);
   });
