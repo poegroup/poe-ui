@@ -11,7 +11,7 @@
     "camshaft/log": "*",
     "camshaft/ng-feature": "*",
     "camshaft/feature-ui": "*",
-    "hypergroup/ng-hyper": "*",
+    "hypergroup/ng-hyper": "^0.1.2",
     "hypergroup/ng-hyper-translate": "*"
   },
   "development": {},
