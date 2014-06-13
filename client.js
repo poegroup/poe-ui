@@ -18,7 +18,8 @@ var TYPES = [
   'view',
   'directive',
   'controller',
-  'service'
+  'service',
+  'filter'
 ];
 
 /**
