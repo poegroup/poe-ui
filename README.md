@@ -6,31 +6,24 @@ poe-ui [![Build Status](https://travis-ci.org/poegroup/poe-ui.png)](https://trav
 Getting Started
 ---------------
 
+### Installation
+
+```sh
+$ npm install -g poe-ui
+```
+
+### Create a new project
+
 ```sh
 $ mkdir my-new-project
 $ cd my-new-project
-$ npm install poe-ui
-$ touch Makefile
+$ poe-ui-create
 ```
 
-The new `Makefile` should look something like this:
-
-```make
-PROJECT=my-new-project
-DESCRIPTION=This is a really great app!
-ORGANIZATION=my-github-org
-
-STYLE_BUILDER=$(CURDIR)/node_modules/shoelace-stylus
-
-include ./node_modules/poe-ui/tasks.mk
-```
-
-Once the `Makefile` is initialized, run:
+### Running the application
 
 ```sh
-$ make init
-$ cp .env.example .env
-$ foreman start
+$ make start
 $ open http://localhost:5000
 ```
 
