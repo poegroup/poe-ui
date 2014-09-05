@@ -12,7 +12,8 @@
     "camshaft/ng-feature": "*",
     "camshaft/feature-ui": "*",
     "hypergroup/ng-hyper": "^0.1.2",
-    "hypergroup/ng-hyper-translate": "*"
+    "hypergroup/ng-hyper-translate": "*",
+    "ianstormtaylor/to-camel-case": "^0.2.1"
   },
   "development": {},
   "license": "MIT",

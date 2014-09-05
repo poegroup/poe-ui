@@ -9,6 +9,7 @@ var translate = require('ng-hyper-translate');
 var logger = require('./client/logger');
 var token = require('access-token');
 var envs = require('envs');
+var toCamelCase = require('to-camel-case');
 
 /**
  * setup different types of methods
@@ -122,6 +123,7 @@ types(function(type) {
   App.prototype[type] = function(name, conf) {
     if (type === 'controller') name = toController(name);
     if (type === 'view') this[plural][name.replace('.jade', '').replace('.html', '')] = conf;
+    if (type !== 'view') name = toCamelCase(name);
     this[plural][name] = conf;
   };
 });
