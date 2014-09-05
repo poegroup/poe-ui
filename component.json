@@ -2,7 +2,7 @@
   "name": "poe-ui",
   "repo": "poegroup/poe-ui",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "keywords": [],
   "dependencies": {
     "camshaft/access-token": "*",
