@@ -121,9 +121,9 @@ App.prototype.start = function(scope, fn) {
 types(function(type) {
   var plural = type + 's';
   App.prototype[type] = function(name, conf) {
-    if (type === 'controller') name = toController(name);
     if (type === 'view') this[plural][name.replace('.jade', '').replace('.html', '')] = conf;
-    if (type !== 'view') name = toCamelCase(name);
+    else name = toCamelCase(name);
+    if (type === 'controller') name = toController(name);
     this[plural][name] = conf;
   };
 });
