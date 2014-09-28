@@ -1,10 +1,16 @@
-html
-  padding 40px
-  font-family Helvetica, Arial, san-serif
+unless support-ie
+  *
+    box-sizing border-box
 
-a
-a:visited
-a:hover
-a:active
-  color $color-dark
+body
+  text-align center
 
+header
+  @extend .container
+
+.content
+  @extend .container
+  &-link
+    @extend $button--generic
+    @extend .button-default
+    clear fix

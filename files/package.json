@@ -1,6 +1,6 @@
 {
   "name": "PROJECT",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "DESCRIPTION",
   "author": "",
   "main": "app.js",
@@ -17,9 +17,10 @@
     "npm": "1.x.x"
   },
   "dependencies": {
-    "poe-ui": "^0.4.4",
-    "startup": "^0.3.0",
-    "envs": "^0.1.4"
+    "poe-ui": "^0.4.8",
+    "startup": "^1.0.0",
+    "envs": "^0.1.4",
+    "shoelace-ui-aglet": "^0.1.0"
   },
   "devDependencies": {
     "mocha": "*",
