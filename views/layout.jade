@@ -1,15 +1,4 @@
 extends ../node_modules/poe-ui-kit/views/layout
 
-prepend styles
-  style.
-    .ng-cloak{display:none};
-append scripts
-  script.
-    $script.ready('!{app}', function() { require('!{app}').start(!{JSON.stringify(env)}); });
 append meta
   base(target="_self", href=base + '/')
-block title
-  title(ng-bind="$root.title")= title
-block content
-  div(data-ng-controller="HyperController")
-    block body
