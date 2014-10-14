@@ -164,6 +164,7 @@ function initLR(app) {
   };
 
   var lr = new LR(null, false);
+  lr._tty = false;
 
   app.useBefore('router', '/livereload.js', lr.client());
   app.on('ready', function(server) {
