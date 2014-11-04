@@ -183,4 +183,22 @@ function initLR(app) {
   });
 
   app.watch = lr.watch.bind(lr);
+
+  var watch = require(process.cwd() + '/node_modules/lr/lib/watch');
+  var realpath = require('fs').realpathSync;
+
+  app.watchDir = function(dir, command, muted) {
+    dir = realpath(dir);
+    var globs = {};
+    globs['**'] = {
+      cmd: command,
+      muted: !!muted
+    };
+    watch(globs, {
+      root: dir,
+      ignore: ['.git']
+    }, function(file, muted) {
+      if (!muted) lr.reload(file);
+    });
+  };
 }
