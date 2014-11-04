@@ -173,7 +173,7 @@ function initLR(app) {
 
   lr.watch('public/stylesheets/*', 'make build/style.css', true);
   lr.watch('public/!(stylesheets)/**', 'make build');
-  lr.watch('components/**', 'rm -f build/vendor.js && make build/vendor.js');
+  lr.watch('components/**', 'make -B build/vendor.js');
   lr.watch('component.json', 'make');
   lr.watch('views/**');
   lr.watch('build/style.css');
