@@ -232,6 +232,6 @@ function start(mod, app) {
 
   // show the feature UI
   setTimeout(function() {
-    require('feature-ui')();
+    (window['feature-ui'] = require('feature-ui'))();
   }, 10);
 }
