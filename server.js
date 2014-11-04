@@ -155,7 +155,7 @@ function initRoute(app, conf, restrict) {
 
 function initLR(app) {
   // init the lr server
-  if (envs('NODE_ENV') !== 'development' || envs('DISABLE_LR')) return;
+  if (envs('NODE_ENV') !== 'development' || envs('DISABLE_LR')) return app.watch = function() {};
 
   try {
     var LR = require(process.cwd() + '/node_modules/lr');
@@ -181,4 +181,6 @@ function initLR(app) {
   lr.start(function(path) {
     lr.log && lr.log(path);
   });
+
+  app.watch = lr.watch.bind(lr);
 }
