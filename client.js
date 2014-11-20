@@ -92,6 +92,7 @@ App.prototype.start = function(scope, fn) {
   mod.name = self.name;
 
   envs.set(scope);
+  mod.constant('envs', envs);
 
   types(function(type) {
     if (type === 'view') return;
