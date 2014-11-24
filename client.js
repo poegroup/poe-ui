@@ -42,6 +42,7 @@ function App(name) {
   self.name = name;
   self.deps = [hyper.name, translate.name, feature.name];
   self.configures = [cachePartials(this)];
+  self.preboots = [];
   types(function(type) {
     self[type + 's'] = {};
   });
@@ -68,6 +69,14 @@ App.prototype.use = function(dep) {
 App.prototype.routes = function(routes) {
   this.routes = routes;
 };
+
+/**
+ * Preboot
+ */
+
+App.prototype.preboot = function(arr) {
+  this.preboots.push(arr);
+}
 
 /**
  * Add a configure function
@@ -105,6 +114,10 @@ App.prototype.start = function(scope, fn) {
 
   initRoutes(mod, self.routes, self.views, self.controllers);
   initHttp(mod);
+
+  angular.forEach(self.preboots, function(fn) {
+    mod.config(fn);
+  });
 
   if (fn) self.configures.push(fn);
 
