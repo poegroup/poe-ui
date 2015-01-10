@@ -50,7 +50,7 @@ module.exports = function(routesPath, opts) {
 };
 
 function loadRoutes(routesPath) {
-  var routes = read(routesPath, 'utf8');
+  // var routes = read(routesPath, 'utf8');
   // TODO
 };
 
