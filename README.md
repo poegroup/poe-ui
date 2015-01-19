@@ -1,7 +1,9 @@
-poe-ui [![Build Status](https://travis-ci.org/poegroup/poe-ui.png)](https://travis-ci.org/poegroup/poe-ui)
+poe-ui
 =========
 
 `poe-ui` is a high-productivity collection of tools and practices for rapidly writing production-ready applications.
+
+Check out the [guide](https://poegroup.github.com/guide).
 
 Getting Started
 ---------------
