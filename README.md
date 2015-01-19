@@ -1,7 +1,10 @@
 poe-ui
 =========
 
-`poe-ui` is a high-productivity collection of tools and practices for rapidly writing production-ready applications.
+`poe-ui` is a high-productivity collection of tools and practices for
+rapidly writing production-ready applications.
+
+Check out the [guide](https://poegroup.github.com/guide).
 
 Check out the [guide](https://poegroup.github.com/guide).
 
