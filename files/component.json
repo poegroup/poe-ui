@@ -1,13 +1,11 @@
 {
-  "repo": "REPO",
   "name": "PROJECT",
+  "repository": "REPO",
   "description": "DESCRIPTION",
-  "version": "0.0.1",
-  "keywords": [],
+  "version": "0.1.0",
   "dependencies": {
-    "poegroup/poe-ui": "^0.4.8",
-    "camshaft/component-angular": "NG_VERSION"
-  },
-  "development": {},
-  "license": "MIT"
+    "poegroup/poe-ui": "^0.4.15",
+    "camshaft/component-angular": "NG_VERSION",
+    "camshaft/component-angular-route": "NG_VERSION"
+  }
 }

@@ -8,9 +8,20 @@ check git
 check npm
 check make
 
+if [[ $(ls -l | wc -l) -gt 1 ]]; then
+  answer=Y
+  read -e -p "project is not empty. abort? ($answer) " answer
+  answer="${input:-$answer}"
+  if [[ $answer == 'Y' ]]; then
+    <&2 echo "aborting poe app creation"
+    exit 1
+  fi
+fi
+
 PROJECT=`pwd | xargs basename`
 DESCRIPTION='A poe app'
 ORGANIZATION=`git config --get user.name`
+NG_VERSION=1.2.16
 
 read -e -p "project: ($PROJECT) " input
 PROJECT="${input:-$PROJECT}"
@@ -21,23 +32,25 @@ DESCRIPTION="${input:-$DESCRIPTION}"
 read -e -p "organization: ($ORGANIZATION) " input
 ORGANIZATION="${input:-$ORGANIZATION}"
 
-MAKEFILE="
-include ./node_modules/poe-ui/tasks.mk
-"
+FILENAME=`realpath $0 | xargs dirname`
+FILES=`realpath $FILENAME/../files`
 
-echo "$MAKEFILE" > ./Makefile
+test ! -d $FILES && exit 1
 
-SILENT="--silent"
+for i in $(echo $FILES/* $FILES/.[!.]*); do
+  cp -rf $i .
+done
 
-if [ -n "$POE_VERBOSE" ]; then
-  SILENT=""
-fi
+for i in $(find . -type f -maxdepth 3); do
+	sed -e "s,PROJECT,$PROJECT," $i | \
+  sed -e "s,DESCRIPTION,$DESCRIPTION," | \
+  sed -e "s,REPO,$ORGANIZATION/$PROJECT," | \
+  sed -e "s,NG_VERSION,$NG_VERSION," > /tmp/poe
+  cat /tmp/poe > $i
+done
 
-echo 'Installing dependencies. This may take awhile.'
-npm install ${POE_UI:-poe-ui} $SILENT || exit 1;
+echo 'Installing dependencies...'
 
-mkdir -p public
+npm install
 
-PROJECT=$PROJECT \
-DESCRIPTION=$DESCRIPTION \
-ORGANIZATION=$ORGANIZATION make init
+make start

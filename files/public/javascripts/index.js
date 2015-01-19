@@ -11,9 +11,7 @@ var App = require('poe-ui');
 var app = module.exports = App('PROJECT');
 
 /**
- * Load plugins here
- *
- * Plugins are loaded with the 'use' method:
+ * Load plugins here with the 'use' method:
  *
  *   app.use(require('modal'));
  *
