@@ -1,7 +1,25 @@
-// load & configure dependencies
-@require 'variables'
-@require 'shoelace-ui-aglet'
-@require 'nib'
+// define core styles
 
-// load core styles
-@require 'main'
+html
+  font-family sans-serif
+
+body
+body > div
+  height 100%
+  width 100%
+
+body
+  position absolute
+  margin 0
+  text-align center
+  > div
+    display flex
+    flex-direction column
+    justify-content center
+
+h1
+  font-weight 100
+  margin-top 0
+
+a
+  padding 10px

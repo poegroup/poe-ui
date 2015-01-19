@@ -1,12 +1,11 @@
 {
   "name": "PROJECT",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "DESCRIPTION",
-  "author": "",
+  "author": "ORGANIZATION",
   "main": "app.js",
   "scripts": {
-    "start": "./node_modules/.bin/startup start",
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha"
+    "start": "./node_modules/.bin/startup start"
   },
   "repository": {
     "type": "git",
@@ -17,14 +16,8 @@
     "npm": "1.x.x"
   },
   "dependencies": {
-    "poe-ui": "^0.4.8",
-    "startup": "^1.0.0",
-    "envs": "^0.1.4",
-    "shoelace-ui-aglet": "^0.1.0"
-  },
-  "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "lr": "*"
+    "poe-ui": "^0.4.15",
+    "startup": "^1.0.3",
+    "envs": "^0.1.6"
   }
 }
