@@ -43,6 +43,14 @@ module.exports = function(routesPath, opts) {
 
   mountRoutes(app, routes, opts.restricted);
 
+  // setup loaders
+  app.builder.resolve.extensions.push('.jade');
+  app.builder.addLoader('jade', 'react-component-loader!onus-loader!es6-loader!ast2template-loader!jade2ast-loader');
+
+  app.builder.resolve.extensions.push('.ess');
+  app.builder.addLoader(/\.(ess\?(dynamic|raw))$/, 'ess-loader!es6-loader!ast2template?pass-through=1!rework2ast-loader');
+  app.builder.addStyle(/\.(ess)$/, 'css-loader!ess-loader!es6-loader!ast2template?pass-through=1!rework2ast-loader');
+
   // TODO mount the app api
   // api(app, routes);
 
