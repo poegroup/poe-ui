@@ -47,7 +47,6 @@ module.exports = function(routesPath, opts) {
   app.builder.resolve.extensions.push('.jade');
   app.builder.addLoader('jade', 'react-component-loader!esnext-loader!onus-loader!ast2template-loader!jade2ast-loader');
 
-  app.builder.resolve.extensions.push('.ess');
   app.builder.addLoader(/\.(ess\?(dynamic|raw))$/, 'ess-loader!esnext-loader!ast2template?pass-through=1!rework2ast-loader');
   app.builder.addStyle(/\.(ess)$/, 'css-loader!ess-loader!esnext-loader!ast2template?pass-through=1!rework2ast-loader');
 
