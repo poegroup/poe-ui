@@ -19,5 +19,8 @@
     "poe-ui": "^0.4.15",
     "startup": "^1.0.3",
     "envs": "^0.1.6"
+  },
+  "devDependencies": {
+    "lr": "^0.1.15"
   }
 }
