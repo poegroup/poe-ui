@@ -50,11 +50,19 @@ module.exports = function(routesPath, opts) {
   app.builder.addLoader(/\.(ess\?(dynamic|raw))$/, 'ess-loader!esnext-loader!ast2template?pass-through=1!rework2ast-loader');
   app.builder.addStyle(/\.(ess)$/, 'css-loader!ess-loader!esnext-loader!ast2template?pass-through=1!rework2ast-loader');
 
+  app.builder.addLoader('yml', 'json-loader!yaml-loader');
+
   // TODO mount the app api
   // api(app, routes);
 
   return app;
 };
+
+/**
+ * Expose the middleware
+ */
+
+exports.middleware = stack.middleware;
 
 function loadRoutes(routesPath) {
   // var routes = read(routesPath, 'utf8');
