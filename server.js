@@ -22,7 +22,7 @@ var headers = {
  * Create a poe-ui app
  */
 
-module.exports = function(routesPath, opts) {
+exports = module.exports = function(routesPath, opts) {
   if (!routesPath || typeof routesPath !== 'string') throw new Error('Missing routes path parameter');
   opts = opts || {};
 
