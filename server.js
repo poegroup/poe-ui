@@ -29,7 +29,10 @@ exports = module.exports = function(routesPath, opts) {
   var app = stack(opts);
 
   var API_URL = opts.apiUrl || envs('API_URL');
-  if (API_URL) app.useBefore('base', '/api', 'api-proxy', proxy(API_URL, {xforward: headers}));
+  if (API_URL) app.useBefore('base', '/api', 'api-proxy', proxy(API_URL, {xforward: headers, onrequest: function(opts) {
+    delete opts.headers['if-none-match'];
+    delete opts.headers.connection;
+  }}));
 
   // TODO init auth
   // initAuth(app, opts.auth)
