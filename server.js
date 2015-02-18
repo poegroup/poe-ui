@@ -47,6 +47,9 @@ exports = module.exports = function(routesPath, opts) {
   mountRoutes(app, routes, opts.restricted);
 
   // setup loaders
+  app.builder.module.loaders.push({
+    test: /\.(js)$/, exclude: /node_modules/, loader: 'esnext-loader'
+  });
   app.builder.resolve.extensions.push('.jade');
   app.builder.addLoader('jade', (process.env.NODE_ENV === 'development' ? 'react-component-loader!' : '') + 'esnext-loader!onus-loader!ast2template-loader!jade2ast-loader');
 
