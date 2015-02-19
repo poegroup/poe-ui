@@ -214,10 +214,11 @@ function initHttp(app) {
       if (api) $provide.value('hyperHttpRoot', api);
 
       // TODO redirect to login if the token is no longer valid
+      var bearer = token.bearer();
       $http.defaults.transformRequest.push(function(data, get) {
         var headers = get();
-        headers['Authorization'] = token.bearer();
-        headers['Accept'] = 'application/hyper+json';
+        headers.Authorization = bearer;
+        headers.Accept = 'application/hyper+json';
         return data;
       });
     }
