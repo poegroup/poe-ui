@@ -19,6 +19,7 @@
     "url": "https://github.com/poegroup/poe-ui/issues"
   },
   "dependencies": {
+    "autoprefixer-loader": "^1.1.0",
     "debug": "^2.0.0",
     "envs": "~0.1.1",
     "passport": "~0.1.17",
