@@ -5,7 +5,9 @@
 var stack = require('poe-ui-kit');
 var proxy = require('simple-http-proxy');
 var envs = require('envs');
-var read = require('fs').readFileSync;
+var fs = require('fs');
+var read = fs.readFileSync;
+var exists = fs.existsSync;
 
 /**
  * Forwarding headers
@@ -58,6 +60,11 @@ exports = module.exports = function(routesPath, opts) {
   app.builder.addStyle(/\.(ess)$/, 'css-loader!autoprefixer-loader!ess-loader!esnext-loader!ast2template?pass-through=1!ess2ast-loader');
 
   app.builder.addLoader('yml', 'json-loader!yaml-loader');
+
+  var rootFile = process.cwd() + '/src/root.js';
+  app.builder.ast2template = {
+    root: exists(rootFile) ? rootFile : null
+  };
 
   // TODO mount the app api
   // api(app, routes);
