@@ -61,7 +61,7 @@ exports = module.exports = function(routesPath, opts) {
 
   app.builder.addLoader('yml', 'json-loader!yaml-loader');
 
-  var rootFile = process.cwd() + '/src/root.js';
+  var rootFile = app.builder.sourcedir + '/root.js';
   app.builder.ast2template = {
     root: exists(rootFile) ? rootFile : null
   };
