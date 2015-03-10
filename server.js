@@ -81,16 +81,12 @@ exports.middleware = stack.middleware;
 function loadRoutes(routesPath) {
   // var routes = read(routesPath, 'utf8');
   // TODO
-};
-
-function mountRoutes(app, routes, restricted) {
-  app.get('*', isNotReserved, function(req, res) {
-    res.render('index.jade');
-  });
 }
 
-var re = /^\/(build|api).*/;
-function isNotReserved(req, res, next) {
-  if (re.test(req.url)) return next('route');
-  next();
+function mountRoutes(app, routes, restricted) {
+  var re = /^\/(build|api).*/;
+  app.useAfter('router', function indexPage(req, res, next) {
+    if (re.test(req.url)) return next();
+    res.render('index.jade');
+  });
 }
