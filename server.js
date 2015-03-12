@@ -37,7 +37,7 @@ exports = module.exports = function(routesPath, opts) {
   }}));
 
   // TODO init auth
-  // initAuth(app, opts.auth)
+  // initAuth(app, opts.auth);
 
   // remove the middleware we don't need
   app.remove('methodOverride');
@@ -60,6 +60,12 @@ exports = module.exports = function(routesPath, opts) {
   app.builder.addStyle(/\.(ess)$/, 'css-loader!autoprefixer-loader!ess-loader!esnext-loader!ast2template?pass-through=1!ess2ast-loader');
 
   app.builder.addLoader('yml', 'json-loader!yaml-loader');
+
+  // files
+  app.builder.addLoader('png', 'file-loader');
+  app.builder.addLoader('jpg', 'file-loader');
+  app.builder.addLoader('gif', 'file-loader');
+  app.builder.addLoader('svg', 'file-loader');
 
   var rootFile = app.builder.sourcedir + '/root.js';
   app.builder.ast2template = {
