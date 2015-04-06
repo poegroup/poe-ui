@@ -10,7 +10,31 @@ var OAuthStrategy = require('passport-oauth2').Strategy;
  * Expose the simple auth methods
  */
 
-module.exports = SimpleAuth;
+exports = module.exports = SimpleAuth;
+
+exports.attach = function(app, conf) {
+  conf = conf || {};
+  if (!envs('OAUTH_CLIENT_ID')) return app.restrict = function() {return function(req, res, next) {next();}};
+
+  var auth = new SimpleAuth(conf);
+  app.useBefore('router', '/auth/login', 'auth:login', auth.login());
+  app.useBefore('router', '/auth/register', 'auth:register', auth.login({register: 1}));
+  app.useBefore('router', '/auth/callback', 'auth:callback', auth.login());
+  app.useBefore('router', '/auth/logout', 'auth:logout', auth.logout());
+  app.useBefore('router', '/auth', 'auth:root-redirect', function(req, res) {
+    res.redirect(req.base);
+  });
+
+  app.restrict = auth.authenticate;
+
+  if (conf.restricted) app.useBefore('router', '/', 'auth:restrict', auth.authenticate());
+
+  return auth;
+};
+
+/**
+ * Initialize the constructor
+ */
 
 function SimpleAuth(opts) {
   if (!(this instanceof SimpleAuth)) return new SimpleAuth(opts);
@@ -21,7 +45,7 @@ function SimpleAuth(opts) {
 };
 
 SimpleAuth.prototype.register = function(opts) {
-  var AUTH_URL = opts.authURL || envs('AUTH_URL');
+  var AUTH_URL = opts.authURL || envs('OAUTH_URL');
   var AUTHORIZATION_URL = opts.authorizationPath || '/authorize';
   var TOKEN_URL = opts.tokenPath || '/token';
 

@@ -8,6 +8,7 @@ var envs = require('envs');
 var fs = require('fs');
 var read = fs.readFileSync;
 var exists = fs.existsSync;
+var oauth = require('./server/oauth');
 
 /**
  * Forwarding headers
@@ -36,8 +37,7 @@ exports = module.exports = function(routesPath, opts) {
     delete opts.headers.connection;
   }}));
 
-  // TODO init auth
-  // initAuth(app, opts.auth);
+  oauth.attach(app, opts.auth);
 
   // remove the middleware we don't need
   app.remove('methodOverride');

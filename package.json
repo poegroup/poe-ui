@@ -22,7 +22,7 @@
     "autoprefixer-loader": "^1.1.0",
     "debug": "^2.0.0",
     "envs": "~0.1.1",
-    "passport": "~0.1.17",
+    "passport": "~0.2.0",
     "passport-oauth2": "~1.1.1",
     "poe-ui-kit": "poegroup/poe-ui-kit#webpack",
     "simple-http-proxy": "~0.5.6"
