@@ -3,7 +3,6 @@
  */
 
 var stack = require('poe-ui-kit');
-var proxy = require('simple-http-proxy');
 var envs = require('envs');
 var fs = require('fs');
 var read = fs.readFileSync;
@@ -31,12 +30,6 @@ exports = module.exports = function(routesPath, opts) {
 
   var app = stack(opts);
 
-  var API_URL = opts.apiUrl || envs('API_URL');
-  if (API_URL) app.useBefore('base', '/api', 'api-proxy', proxy(API_URL, {xforward: headers, onrequest: function(opts) {
-    delete opts.headers['if-none-match'];
-    delete opts.headers.connection;
-  }}));
-
   oauth.attach(app, opts.auth);
 
   // remove the middleware we don't need
@@ -46,7 +39,7 @@ exports = module.exports = function(routesPath, opts) {
 
   var routes = loadRoutes(routesPath);
 
-  mountRoutes(app, routes, opts.restricted);
+  mountRoutes(app, routes);
 
   // setup loaders
   app.builder.module.loaders.push(
@@ -72,9 +65,6 @@ exports = module.exports = function(routesPath, opts) {
     root: exists(rootFile) ? rootFile : null
   };
 
-  // TODO mount the app api
-  // api(app, routes);
-
   return app;
 };
 
@@ -90,7 +80,7 @@ function loadRoutes(routesPath) {
 }
 
 function mountRoutes(app, routes, restricted) {
-  var re = /^\/(build|api).*/;
+  var re = /^\/(build).*/;
   app.useAfter('router', function indexPage(req, res, next) {
     if (re.test(req.url)) return next();
     res.render('index.jade');

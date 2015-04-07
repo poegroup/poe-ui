@@ -2,139 +2,100 @@
  * Module dependencies
  */
 
-var passport = require('passport');
 var envs = require('envs');
-var OAuthStrategy = require('passport-oauth2').Strategy;
+var qs = require('qs');
+var hyperagent = require('hyperagent');
 
-/**
- * Expose the simple auth methods
- */
-
-exports = module.exports = SimpleAuth;
-
-exports.attach = function(app, conf) {
+exports.attach = function(app, conf, client) {
   conf = conf || {};
-  if (!envs('OAUTH_CLIENT_ID')) return app.restrict = function() {return function(req, res, next) {next();}};
+  if (!envs('OAUTH_CLIENT_ID')) return;
 
-  var auth = new SimpleAuth(conf);
-  app.useBefore('router', '/auth/login', 'auth:login', auth.login());
-  app.useBefore('router', '/auth/register', 'auth:register', auth.login({register: 1}));
-  app.useBefore('router', '/auth/callback', 'auth:callback', auth.login());
-  app.useBefore('router', '/auth/logout', 'auth:logout', auth.logout());
+  app.useBefore('router', '/auth/login', 'auth:login', login(conf));
+  app.useBefore('router', '/auth/register', 'auth:register', login(conf, {register: 1}));
+  app.useBefore('router', '/auth/callback', 'auth:callback', callback(conf, client));
+  app.useBefore('router', '/auth/logout', 'auth:logout', logout(conf));
   app.useBefore('router', '/auth', 'auth:root-redirect', function(req, res) {
     res.redirect(req.base);
   });
 
-  app.restrict = auth.authenticate;
-
-  if (conf.restricted) app.useBefore('router', '/', 'auth:restrict', auth.authenticate());
-
-  return auth;
+  if (conf.restricted) app.useBefore('router', '/', 'auth:restrict', login(conf));
 };
 
-/**
- * Initialize the constructor
- */
+function login(opts, additionalParams) {
+  var CLIENT_ID = envs('OAUTH_CLIENT_ID');
+  var OAUTH_URL = envs('OAUTH_URL');
+  additionalParams = additionalParams || {};
 
-function SimpleAuth(opts) {
-  if (!(this instanceof SimpleAuth)) return new SimpleAuth(opts);
-  this.opts = opts || {};
-  this.name = this.opts.name || 'random name';
-  this.cookieDomain = this.opts.cookieDomain;
-  this.register(this.opts);
-};
+  return function oauthLogin(req, res, next) {
+    var location = (req.get('referrer') || req.base);
+    var auth_url = req.get('x-auth-url') || OAUTH_URL;
 
-SimpleAuth.prototype.register = function(opts) {
-  var AUTH_URL = opts.authURL || envs('OAUTH_URL');
-  var AUTHORIZATION_URL = opts.authorizationPath || '/authorize';
-  var TOKEN_URL = opts.tokenPath || '/token';
+    // we're already logged-in
+    if (req.cookies._access_token || !CLIENT_ID || !auth_url) return res.redirect(location);
 
-  var strategy = new OAuthStrategy({
-    clientID: envs('OAUTH_CLIENT_ID'),
-    clientSecret: envs('OAUTH_CLIENT_SECRET'),
-    authorizationURL: AUTHORIZATION_URL,
-    tokenURL: TOKEN_URL,
-    skipUserProfile: true
-  },
-  function(accessToken, refreshToken, profile, done) {
-    profile = profile || {};
-    profile.accessToken = accessToken;
-    profile.refreshToken = refreshToken;
-    done(null, profile);
-  });
+    var params = {
+      client_id: CLIENT_ID,
+      redirect_uri: req.base + '/auth/callback',
+      response_type: 'code',
+      scope: Array.isArray(opts.scope) ? opts.scope.join(' ') : opts.scope,
+      // TODO sign the state
+      state: location
+    };
 
-  strategy.name = this.name;
-  strategy._host = AUTH_URL;
+    for (var k in additionalParams) {
+      params[k] = additionalParams[k];
+    }
 
-  var _authenticate = strategy.authenticate;
-  strategy.authenticate = function(req, options) {
-    options = options || {};
-
-    this._oauth2._baseSite = options.host || this._host;
-    _authenticate.apply(this, arguments);
+    res.redirect(auth_url + '/authorize?' + qs.stringify(params));
   };
+}
 
-  passport.use(strategy);
-};
+function error() {
+  return function oauthError(req, res, next) {
+    if (!req.query.error) return next();
+    // TODO where should we redirect?
+    res.redirect(req.base);
+  };
+}
 
-SimpleAuth.prototype.login = function(options) {
-  var self = this;
-  options = options || {};
+function callback(opts) {
+  var CLIENT_ID = envs('OAUTH_CLIENT_ID');
+  var CLIENT_SECRET = envs('OAUTH_CLIENT_SECRET');
+  var API_URL = envs('API_URL');
 
-  return function (req, res, next) {
-    // If they're already signed in, don't do anything
-    if (req.cookies._access_token && !req.query.code) return next();
+  return function oauthCallback(req, res, next) {
+    var code = req.query.code;
+    var apiUrl = req.get('x-api-url') || API_URL;
+    if (!code || !CLIENT_ID || !CLIENT_SECRET || !apiUrl) return res.redirect(req.base);
 
-    // Setup the options for passport
-    options.callbackURL = req.base + '/auth/callback';
-    options.state = (req.get('referrer') || '/');
-    options.host = req.get('x-auth-url');
+    var params = {
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      code: code,
+      redirect_uri: req.base + '/auth/callback'
+    };
 
-    // Profile the call
-    var done = req.metric.profile('login');
+    hyperagent(apiUrl).submit('.oauth.authorization_code', params, function(err, body, resp) {
+      if (err || !body || !body.access_token) return res.redirect(req.query.state || req.base);
 
-    return passport.authenticate(self.name, options, function(err, profile) {
-      // End profiling
-      done();
-
-      // We've got an error
-      if (err) return next(err);
-
-      // TODO handle oauth errors - like access denied
-      if (!profile.accessToken) return res.redirect(req.query.state);
-
-      // Expose the profile
-      req.user = profile;
-
-      // Expose the access token
-      res.cookie('_access_token', profile.accessToken, {
+      res.cookie('_access_token', body.access_token, {
         secure: ~req.base.indexOf('https://'),
-        domain: self.cookieDomain
-        // maxAge: profile.expires_in // TODO
+        maxAge: body.expires_in
       });
 
       res.redirect(req.query.state || req.base);
-    })(req, res, next);
+    });
   };
-};
+}
 
-SimpleAuth.prototype.logout = function() {
-  return function(req, res, next) {
-    // Clear the access token
+function logout(opts) {
+  var OAUTH_URL = envs('OAUTH_URL');
+
+  return function oauthLogout(req, res, next) {
     res.clearCookie('_access_token', {
       secure: ~req.base.indexOf('https://')
     });
 
-    res.redirect((req.get('x-auth-url') || AUTH_URL) + '/logout');
-  }
-};
-
-SimpleAuth.prototype.authenticate = function(restricted) {
-  return restricted
-    ? this.login()
-    : noop;
-};
-
-function noop(req, res, next) {
-  next();
-};
+    res.redirect((req.get('x-auth-url') || OAUTH_URL) + '/logout');
+  };
+}
