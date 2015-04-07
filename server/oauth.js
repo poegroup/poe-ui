@@ -61,7 +61,7 @@ function error() {
 function callback(opts, redirect) {
   var CLIENT_ID = envs('OAUTH_CLIENT_ID');
   var CLIENT_SECRET = envs('OAUTH_CLIENT_SECRET');
-  var API_URL = envs('API_URL');
+  var API_URL = envs('API_URL', '').replace(/^ws/, 'http');
 
   return function oauthCallback(req, res, next) {
     var code = req.query.code;
