@@ -10,7 +10,7 @@ exports.attach = function(app, conf, client) {
   conf = conf || {};
   if (!envs('OAUTH_CLIENT_ID')) return;
 
-  app.useBefore('router', '/auth/login', 'auth:login', login(conf));
+  app.useBefore('router', '/auth/login', 'auth:login', login(conf, null, true));
   app.useBefore('router', '/auth/register', 'auth:register', login(conf, {register: 1}));
   app.useBefore('router', '/auth/callback', 'auth:callback', callback(conf, client));
   app.useBefore('router', '/auth/logout', 'auth:logout', logout(conf));
@@ -21,7 +21,7 @@ exports.attach = function(app, conf, client) {
   if (conf.restricted) app.useBefore('router', '/', 'auth:restrict', login(conf));
 };
 
-function login(opts, additionalParams) {
+function login(opts, additionalParams, redirect) {
   var CLIENT_ID = envs('OAUTH_CLIENT_ID');
   var OAUTH_URL = envs('OAUTH_URL');
   additionalParams = additionalParams || {};
@@ -31,7 +31,7 @@ function login(opts, additionalParams) {
     var auth_url = req.get('x-auth-url') || OAUTH_URL;
 
     // we're already logged-in
-    if (req.cookies._access_token || !CLIENT_ID || !auth_url) return res.redirect(location);
+    if (req.cookies._access_token || !CLIENT_ID || !auth_url) return redirect ? res.redirect(req.base) : next();
 
     var params = {
       client_id: CLIENT_ID,
@@ -58,7 +58,7 @@ function error() {
   };
 }
 
-function callback(opts) {
+function callback(opts, redirect) {
   var CLIENT_ID = envs('OAUTH_CLIENT_ID');
   var CLIENT_SECRET = envs('OAUTH_CLIENT_SECRET');
   var API_URL = envs('API_URL');
