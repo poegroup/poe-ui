@@ -80,7 +80,7 @@ function callback(opts, redirect) {
 
       res.cookie('_access_token', body.access_token, {
         secure: ~req.base.indexOf('https://'),
-        maxAge: body.expires_in
+        maxAge: body.expires_in * 1000
       });
 
       res.redirect(req.query.state || req.base);
