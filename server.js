@@ -8,6 +8,9 @@ var fs = require('fs');
 var read = fs.readFileSync;
 var exists = fs.existsSync;
 var oauth = require('./server/oauth');
+var proxy = require('simple-http-proxy');
+
+var NODE_ENV = envs('NODE_ENV', 'production');
 
 /**
  * Forwarding headers
@@ -29,6 +32,8 @@ exports = module.exports = function(routesPath, opts) {
   opts = opts || {};
 
   var app = stack(opts);
+
+  if (NODE_ENV === 'development') mountDevProxy(app, envs('API_URL'));
 
   oauth.attach(app, opts.auth);
 
@@ -85,4 +90,14 @@ function mountRoutes(app, routes, restricted) {
     if (re.test(req.url)) return next();
     res.render('index.jade');
   });
+}
+
+function mountDevProxy(app, API_URL) {
+  if (!API_URL) return;
+
+  app.useAfter('cookieParser', '/api', 'api-proxy', proxy(API_URL.replace(/^ws/, 'http'), {xforward: headers, onrequest: function(opts, req) {
+    delete opts.headers['if-none-match'];
+    delete opts.headers.connection;
+    if (!opts.headers.authorization && req.cookies && req.cookies._access_token) opts.headers.authorization = 'Bearer ' + req.cookies._access_token;
+  }}));
 }
