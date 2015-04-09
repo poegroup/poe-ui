@@ -11,7 +11,7 @@ exports.attach = function(app, conf, client) {
   if (!envs('OAUTH_CLIENT_ID')) return;
 
   app.useBefore('router', '/auth/login', 'auth:login', login(conf, null, true));
-  app.useBefore('router', '/auth/register', 'auth:register', login(conf, {register: 1}));
+  app.useBefore('router', '/auth/signup', 'auth:signup', login(conf, {signup: 1}));
   app.useBefore('router', '/auth/callback', 'auth:callback', callback(conf, client));
   app.useBefore('router', '/auth/logout', 'auth:logout', logout(conf));
   app.useBefore('router', '/auth', 'auth:root-redirect', function(req, res) {
