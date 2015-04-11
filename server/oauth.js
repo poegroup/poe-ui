@@ -89,6 +89,7 @@ function callback(opts, redirect) {
 }
 
 function logout(opts) {
+  var CLIENT_ID = envs('OAUTH_CLIENT_ID');
   var OAUTH_URL = envs('OAUTH_URL');
 
   return function oauthLogout(req, res, next) {
@@ -96,6 +97,6 @@ function logout(opts) {
       secure: ~req.base.indexOf('https://')
     });
 
-    res.redirect((req.get('x-auth-url') || OAUTH_URL) + '/logout');
+    res.redirect((req.get('x-auth-url') || OAUTH_URL) + '/logout?client_id=' + CLIENT_ID);
   };
 }
