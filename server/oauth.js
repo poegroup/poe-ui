@@ -102,7 +102,7 @@ function logout(opts) {
 }
 
 function verifyState(req, location) {
-  if (!location) return res.base;
+  if (!location) return req.base;
   location = URL.parse(location);
   if (!location.host) return location.path;
   return URL.parse(req.base).host === location.host ?
