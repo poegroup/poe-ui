@@ -5,6 +5,7 @@
 var envs = require('envs');
 var qs = require('qs');
 var hyperagent = require('hyperagent');
+var URL = require('url');
 
 exports.attach = function(app, conf, client) {
   conf = conf || {};
@@ -27,7 +28,6 @@ function login(opts, additionalParams, redirect) {
   additionalParams = additionalParams || {};
 
   return function oauthLogin(req, res, next) {
-    var location = (req.get('referrer') || req.base);
     var auth_url = req.get('x-auth-url') || OAUTH_URL;
 
     // we're already logged-in
@@ -39,7 +39,7 @@ function login(opts, additionalParams, redirect) {
       response_type: 'code',
       scope: Array.isArray(opts.scope) ? opts.scope.join(' ') : opts.scope,
       // TODO sign the state
-      state: location
+      state: verifyState(req, req.get('referrer'))
     };
 
     for (var k in additionalParams) {
@@ -76,14 +76,14 @@ function callback(opts, redirect) {
     };
 
     hyperagent(apiUrl).submit('.oauth.authorization_code', params, function(err, body, resp) {
-      if (err || !body || !body.access_token) return res.redirect(req.query.state || req.base);
+      if (err || !body || !body.access_token) return res.redirect(verifyState(req, req.query.state));
 
       res.cookie('_access_token', body.access_token, {
         secure: ~req.base.indexOf('https://'),
         maxAge: body.expires_in * 1000
       });
 
-      res.redirect(req.query.state || req.base);
+      res.redirect(verifyState(req, req.query.state));
     });
   };
 }
@@ -99,4 +99,13 @@ function logout(opts) {
 
     res.redirect((req.get('x-auth-url') || OAUTH_URL) + '/logout?client_id=' + CLIENT_ID);
   };
+}
+
+function verifyState(req, location) {
+  if (!location) return res.base;
+  location = URL.parse(location);
+  if (!location.host) return location.path;
+  return URL.parse(req.base).host === location.host ?
+    location.href :
+    req.base;
 }
