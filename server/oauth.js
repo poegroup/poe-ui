@@ -12,7 +12,7 @@ exports.attach = function(app, conf, client) {
   if (!envs('OAUTH_CLIENT_ID')) return;
 
   app.useBefore('router', '/auth/login', 'auth:login', login(conf, null, true));
-  app.useBefore('router', '/auth/signup', 'auth:signup', login(conf, {signup: 1}));
+  app.useBefore('router', '/auth/signup', 'auth:signup', login(conf, {signup: 1}, true));
   app.useBefore('router', '/auth/callback', 'auth:callback', callback(conf, client));
   app.useBefore('router', '/auth/logout', 'auth:logout', logout(conf));
   app.useBefore('router', '/auth', 'auth:root-redirect', function(req, res) {
@@ -22,7 +22,7 @@ exports.attach = function(app, conf, client) {
   if (conf.restricted) app.useBefore('router', '/', 'auth:restrict', login(conf));
 };
 
-function login(opts, additionalParams, redirect) {
+function login(opts, additionalParams, explicitLogin) {
   var CLIENT_ID = envs('OAUTH_CLIENT_ID');
   var OAUTH_URL = envs('OAUTH_URL');
   additionalParams = additionalParams || {};
@@ -31,7 +31,7 @@ function login(opts, additionalParams, redirect) {
     var auth_url = req.get('x-auth-url') || OAUTH_URL;
 
     // we're already logged-in
-    if (req.cookies._access_token || !CLIENT_ID || !auth_url) return redirect ? res.redirect(req.base) : next();
+    if (req.cookies._access_token || !CLIENT_ID || !auth_url) return explicitLogin ? res.redirect(req.base) : next();
 
     var params = {
       client_id: CLIENT_ID,
@@ -39,7 +39,7 @@ function login(opts, additionalParams, redirect) {
       response_type: 'code',
       scope: Array.isArray(opts.scope) ? opts.scope.join(' ') : opts.scope,
       // TODO sign the state
-      state: verifyState(req, req.get('referrer'))
+      state: explicitLogin ? req.base : verifyState(req, req.get('referrer'))
     };
 
     for (var k in additionalParams) {
