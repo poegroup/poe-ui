@@ -46,16 +46,18 @@ exports = module.exports = function(routesPath, opts) {
 
   mountRoutes(app, routes);
 
+  var babel = 'babel-loader?optional=runtime&modules=commonStrict&cacheDirectory=/tmp';
+
   // setup loaders
   app.builder.module.loaders.push(
-    {test: /\.(js)$/, exclude: /node_modules/, loader: 'esnext-loader'},
-    {test: /\.(js)$/, include: /node_modules\/[^\/]+\/blocks/, loader: 'esnext-loader'}
+    {test: /\.(js)$/, exclude: /node_modules/, loader: babel},
+    {test: /\.(js)$/, include: /node_modules\/[^\/]+\/blocks/, loader: babel}
   );
   app.builder.resolve.extensions.push('.jade');
-  app.builder.addLoader('jade', (process.env.NODE_ENV === 'development' ? 'react-component-loader!' : '') + 'esnext-loader!onus-loader!ast2template-loader!jade2ast-loader');
+  app.builder.addLoader('jade', (process.env.NODE_ENV === 'development' ? 'react-component-loader!' : '') + babel + '!onus-loader!ast2template-loader!jade2ast-loader');
 
-  app.builder.addLoader(/\.(ess\?(dynamic|raw))$/, 'ess-loader!esnext-loader!ast2template?pass-through=1!ess2ast-loader');
-  app.builder.addStyle(/\.(ess)$/, 'css-loader!autoprefixer-loader!ess-loader!esnext-loader!ast2template?pass-through=1!ess2ast-loader');
+  app.builder.addLoader(/\.(ess\?(dynamic|raw))$/, 'ess-loader!' + babel + '!ast2template?pass-through=1!ess2ast-loader');
+  app.builder.addStyle(/\.(ess)$/, 'css-loader!autoprefixer-loader!ess-loader!' + babel + '!ast2template?pass-through=1!ess2ast-loader');
 
   app.builder.addLoader('yml', 'json-loader!yaml-loader');
 
