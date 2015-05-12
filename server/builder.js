@@ -6,7 +6,7 @@ var fs = require('fs');
 var exists = fs.existsSync;
 
 module.exports = function(r, app, opts, NODE_ENV) {
-  var Builder = r('directiv-core-builder');
+  var Builder = r('poe-ui-builder');
   var webpack = r('webpack');
   if (!Builder) return;
   var entry = opts.entry;
