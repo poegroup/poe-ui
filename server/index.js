@@ -26,6 +26,7 @@ exports = module.exports = function(opts) {
   opt('oauthClientId', process.env.OAUTH_CLIENT_ID);
   opt('oauthClientSecret', process.env.OAUTH_CLIENT_SECRET);
   opt('oauthUrl', process.env.OAUTH_URL);
+  opt('assetCache', process.env.ASSET_CACHE);
 
   var app = stack({
     base: xforward

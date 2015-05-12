@@ -12,7 +12,7 @@ module.exports = function(r, app, opts, NODE_ENV) {
   var entry = opts.entry;
   var builder = app.builder = Builder(entry, webpack);
 
-  var es6 = load('babel-loader?optional=runtime&modules=commonStrict&cacheDirectory=/tmp');
+  var es6 = load('babel-loader?optional=runtime&modules=commonStrict&cacheDirectory=' + (opts.assetCache || '/tmp'));
   var ast2template = load('ast2template-loader?root=' + r.resolve(entry + '/root.js', 'silent'));
 
   /**
