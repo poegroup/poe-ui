@@ -1,2 +1,0 @@
-web: ./node_modules/.bin/startup start
-debug: ./node_modules/.bin/startup start --debug

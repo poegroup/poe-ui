@@ -1,1 +1,52 @@
-extends ../node_modules/poe-ui-kit/views/layout
+doctype html
+html
+  head
+    meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge,chrome=1')
+    block title
+      title= title
+      meta(property='og:title' content=title)
+    block auto-meta
+      meta(name='description' content=description)
+      meta(property='og:description' content=description)
+      meta(name='author' content=author)
+      if locals.image
+        if Array.isArray(image)
+          each img in image
+            meta(property='og:image' content=img)
+        else
+          meta(property='og:image' content=image)
+
+    //- the default setting for the viewport prevents zooming on mobile
+    //- to disable this behavior override the 'viewport' block
+    block viewport
+      meta(name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+
+    //- add any additional meta tags with the 'meta' block
+    block meta
+
+    block styles
+      each style in styles
+        link(href=style rel='stylesheet')
+
+    //- add any extra head elements with the 'head' block
+    block head
+
+    //- add any other needed IE shims or remove them with 'ie-shims'
+    block ie-shims
+      | <!--[if lte IE 9]>
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.js")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js")
+      | <![endif]-->
+    script.
+      __app_path__=!{JSON.stringify(base)};__build_path__=!{JSON.stringify(cdn + '/')};__env__=!{JSON.stringify(env)}
+
+  body
+    block content
+
+  block scripts
+    each script in scripts
+      script(src=script)
+    each script in chunks
+      script(src=script async)

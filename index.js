@@ -1,25 +1,16 @@
 /**
- * Setup the environment
- */
-
-if (typeof document !== 'undefined') {
-  var scripts = document.getElementsByTagName('script');
-  var src = scripts[scripts.length - 1].getAttribute('src');
-  window.__webpack_public_path__ = src.substr(0, src.lastIndexOf('/') + 1);
-}
-
-/**
  * Module dependencies
  */
 
-var inherits = require('util').inherits;
-var DEVELOPMENT = process.env.NODE_ENV === 'development';
+var React = process.env.NODE_ENV === 'production' ? require('react') : require('react/addons');
+var Router = require('react-router');
+var el = React.createElement;
 
 /**
  * Expose the PoeApp
  */
 
-module.exports = PoeApp;
+exports['default'] = PoeApp;
 
 /**
  * Create a PoeApp
@@ -28,14 +19,48 @@ module.exports = PoeApp;
  * @param {String} name
  */
 
-function PoeApp(routes, name) {
-  // TODO load the hyper package
-  // TODO load the feature flags
-  if (DEVELOPMENT) window.app = this;
+function PoeApp(element, context, cb) {
+  cb = cb || function() {};
+  var isString = typeof element === 'string';
+
+  var router = Router.create({
+    location: isString ? element : Router.HistoryLocation,
+    routes: context.routes(el, $get, context)
+  });
+
+  if (process.env.NODE_ENV !== 'production') {
+    window.hyperFormat = context.format;
+    window.hyperStore = context.store;
+  }
+
+  router.run(function(Handler) {
+    React.withContext(context, function() {
+      var root = el(Handler);
+
+      if (isString) return cb(null, React.renderToStaticMarkup.bind(null, root));
+      return React.render(root, element);
+    });
+  });
+
+  return router;
 }
 
+exports.React = React;
+
 /**
- * Expose debugging in development
+ * Expose React to the window
  */
 
-if (DEVELOPMENT) PoeApp.prototype.debug = require('debug');
+if (process.env.NODE_ENV !== 'production') {
+  window.React = React;
+}
+
+function $get(path, parent, fallback) {
+  for (var i = 0, child; i < path.length; i++) {
+    if (!parent) return undefined;
+    child = parent[path[i]];
+    if (typeof child === 'function') parent = child.bind(parent);
+    else parent = child;
+  }
+  return parent;
+}

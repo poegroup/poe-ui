@@ -1,14 +1,8 @@
 {
   "name": "poe-ui",
-  "bin": {
-    "poe-ui-create": "bin/poe-ui-create"
-  },
   "version": "0.4.8",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
   "main": "client.js",
-  "scripts": {
-    "test": "make test"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/poegroup/poe-ui.git"
@@ -19,21 +13,13 @@
     "url": "https://github.com/poegroup/poe-ui/issues"
   },
   "dependencies": {
-    "autoprefixer-loader": "^1.1.0",
+    "colors": "^1.1.0",
     "debug": "^2.0.0",
-    "envs": "~0.1.1",
-    "hyperagent": "^0.2.8",
-    "poe-ui-kit": "poegroup/poe-ui-kit#webpack",
     "qs": "^2.4.1",
-    "simple-http-proxy": "~0.5.6"
+    "simple-stack-common": "^0.2.3"
   },
   "devDependencies": {
     "should": "^3.3.1",
-    "mocha": "^1.18.2",
-    "rimraf": "^2.2.6",
-    "utils-merge": "^1.0.0",
-    "openport": "0.0.3",
-    "phantomjs": "^1.9.7-3",
-    "component": "^1.0.0-rc5"
+    "mocha": "^1.18.2"
   }
 }

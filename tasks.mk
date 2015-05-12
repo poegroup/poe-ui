@@ -1,34 +1,30 @@
-PROJECT      ?= $(notdir $(CURDIR))
-DESCRIPTION  ?= A poe ui app
-ORGANIZATION ?= $(PROJECT)
-REPO         ?= $(ORGANIZATION)/$(PROJECT)
-NG_VERSION   ?= 1.0.8
-
 POE_UI := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-PATH := $(POE_UI)/node_modules/.bin:$(PATH)
 
-include $(POE_UI)/node_modules/poe-ui-kit/build.mk
+### Add node_modules executables to the path
 
-ifeq ($(MAKECMDGOALS),init)
+LOCAL_PATH := $(CURDIR)/node_modules/.bin:$(POE_UI)/node_modules/.bin
+PATH := $(LOCAL_PATH):$(PATH)
 
-DIRS  = $(shell find $(POE_UI)/files -type d -name '*[a-zA-Z]' | sed 's:^$(POE_UI)/files/::')
-FILES = $(shell find $(POE_UI)/files -type f                   | sed 's:^$(POE_UI)/files/::')
+### General targets
 
-### Init files
-init: $(DIRS) $(FILES) init_install install
+start: node_modules .env
+	@$(shell cat .env | grep '^#' --invert-match | xargs) npm start
 
-init_install:
-	@echo 'Installing remaining dependencies...'
-	@npm install --silent
+clean:
+	rm -fr build components manifest.json
 
-$(DIRS):
-	@mkdir -p $@
+### Install targets
 
-$(FILES):
-	@awk '{gsub(/PROJECT/, "$(PROJECT)"); gsub(/DESCRIPTION/, "$(DESCRIPTION)"); gsub(/REPO/, "$(REPO)"); gsub(/NG_VERSION/, "$(NG_VERSION)");print}' \
-		$(POE_UI)/files/$@ > $@
+.env: .env.example
+	@cp $< $@
 
-.PHONY: init init_install
+node_modules:
+	@npm install
 
-endif
+### Build targets
 
+prod:
+	@mkdir -p build
+	@PATH=$(PATH) MANIFEST=manifest.json webpack --bail --config $(POE_UI)/webpack.config.js --output-path build
+
+.PHONY: clean build prod install
