@@ -79,7 +79,6 @@ function load(app, opts) {
     try {
       return require.resolve(resolve(opts.root + '/node_modules', path));
     } catch (e) {
-      console.log(e.stack);
       if (mode === 'silent') return null;
       console.error(path + ' missing. unexpected behavior may occur if not added to the package.json');
       if (mode === 'warn') return null;
