@@ -28,7 +28,7 @@ function PoeApp(element, context, cb) {
     routes: context.routes(el, $get, context)
   });
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
     window.hyperFormat = context.format;
     window.hyperStore = context.store;
   }
@@ -51,7 +51,7 @@ exports.React = React;
  * Expose React to the window
  */
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   window.React = React;
 }
 

@@ -34,7 +34,7 @@ module.exports = function(r, app, opts, NODE_ENV, middleware) {
 
   function lookup(cdn, min, dir, type) {
     // TODO maybe deprecate unminified support - the prod build doesn't do it now anyway...
-    (r(root + '/manifest.json')[type] || []).map(function(entry) {
+    return (r(root + '/manifest.json')[type] || []).map(function(entry) {
       return cdn + dir + '/' + entry;
     });
   }
