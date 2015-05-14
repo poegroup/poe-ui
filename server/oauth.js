@@ -4,6 +4,7 @@
 
 var qs = require('qs');
 var URL = require('url');
+var debug = require('debug')('poe-ui:oauth');
 
 module.exports = function(r, app, opts) {
   if (!opts.oauthClientId) return;
@@ -43,6 +44,8 @@ function login(opts, additionalParams, explicitLogin) {
       params[k] = additionalParams[k];
     }
 
+    debug('login', params);
+
     res.redirect(auth_url + '/authorize?' + qs.stringify(params));
   };
 }
@@ -71,6 +74,7 @@ function callback(opts) {
     };
 
     req.hyperclient.submit('.oauth.authorization_code', params, function(err, body, resp) {
+      debug('callback', err, body);
       if (err || !body || !body.access_token) return res.redirect(verifyState(req, req.query.state));
 
       res.cookie('_access_token', body.access_token, {
