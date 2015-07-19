@@ -65,6 +65,7 @@ module.exports = function(r, app, opts, NODE_ENV) {
   builder.addLoader('jpg', load('file-loader'));
   builder.addLoader('gif', load('file-loader'));
   builder.addLoader('svg', load('file-loader'));
+  builder.addLoader('ico', load('file-loader'));
 
   function load(str) {
     return str.split('!').map(function(loader) {
