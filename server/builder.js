@@ -61,11 +61,21 @@ module.exports = function(r, app, opts, NODE_ENV) {
    * Images
    */
 
-  builder.addLoader('png', load('file-loader'));
-  builder.addLoader('jpg', load('file-loader'));
-  builder.addLoader('gif', load('file-loader'));
-  builder.addLoader('svg', load('file-loader'));
-  builder.addLoader('ico', load('file-loader'));
+  builder.addImage = function(ext, opts) {
+    opts = opts || {};
+    opts.optimizationLevel = opts.optimizationLevel || process.env.PNG_OPTIMIZATION_LEVEL || 2;
+    var str = NODE_ENV === 'development' || !r.resolve('image-webpack-loader', 'silent') ?
+      'file-loader' :
+      'file-loader!image-webpack-loader?' + JSON.stringify(opts);
+    builder.addLoader(ext, str);
+  };
+
+  builder.addImage('png', {pngquant: {speed: 10, quality: '80'}});
+  builder.addImage('jpg', {progressive: true});
+  builder.addImage('jpeg', {progressive: true});
+  builder.addImage('gif');
+  builder.addImage('svg');
+  builder.addImage('ico');
 
   function load(str) {
     return str.split('!').map(function(loader) {
