@@ -63,7 +63,7 @@ module.exports = function(r, app, opts, NODE_ENV) {
 
   builder.addImage = function(ext, opts) {
     opts = opts || {};
-    opts.optimizationLevel = opts.optimizationLevel || process.env.PNG_OPTIMIZATION_LEVEL || 2;
+    opts.optimizationLevel = opts.optimizationLevel || parseInt(process.env.PNG_OPTIMIZATION_LEVEL, 10) || 2;
     var str = NODE_ENV === 'development' || !r.resolve('image-webpack-loader', 'silent') ?
       'file-loader' :
       'file-loader!image-webpack-loader?' + JSON.stringify(opts);
