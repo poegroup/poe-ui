@@ -19,15 +19,19 @@ module.exports = function(r, app, opts, NODE_ENV) {
    * JS
    */
 
-  builder.module.loaders.push({
+  builder.addES6 = function(config) {
+    config.loader = es6;
+    builder.module.loaders.push(config);
+  };
+
+  builder.addES6({
     test: /\.(js)$/,
-    exclude: /node_modules/,
-    loader: es6
+    exclude: /node_modules/
   });
-  builder.module.loaders.push({
+
+  builder.addES6({
     test: /\.(js)$/,
     include: /node_modules\/[^\/]+\/blocks/,
-    loader: es6
   });
 
   builder.resolve.extensions.push('.json');
