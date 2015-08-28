@@ -1,0 +1,59 @@
+var webpack = require(process.cwd() + '/node_modules/webpack');
+
+try {
+  var entries = require(process.cwd() + '/build.json');
+} catch (e) {
+  var entries = {main:{}};
+}
+
+var config = Object.keys(entries).map(function(entry) {
+  delete require.cache[require.resolve(process.cwd())];
+  var child = require(process.cwd()).builder;
+  child.name = entry;
+  var main = child.entry.main;
+  delete child.entry.main;
+  child.entry[entry] = main;
+  child.plugins.push(new webpack.DefinePlugin(encode(entries[entry])));
+  return child;
+});
+
+function encode(obj) {
+  for (k in obj) {
+    obj[k] = JSON.stringify(obj[k]);
+  }
+  return obj;
+}
+
+function handleFatalError(err) {
+  console.error(err.stack);
+  process.exit(1);
+}
+
+function handleSoftErrors(errors) {
+  errors.forEach(function(err) {
+    console.error(err.stack || err);
+  });
+  process.exit(1);
+}
+
+webpack(config, function(err, stats) {
+  if (err) return handleFatalError(err);
+  var jsonStats = stats.toJson();
+  if (jsonStats.errors.length > 0) return handleSoftErrors(jsonStats.errors);
+  console.log(stats.toString({
+    "cached": false,
+    "cachedAssets": false,
+    "modules": true,
+    "chunks": false,
+    "reasons": false,
+    "errorDetails": false,
+    "chunkOrigins": false,
+    "exclude": [
+      "node_modules",
+      "bower_components",
+      "jam",
+      "components"
+    ]
+  }));
+  process.exit(0);
+});

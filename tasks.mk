@@ -4,6 +4,7 @@ POE_UI := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
 LOCAL_PATH := $(CURDIR)/node_modules/.bin:$(POE_UI)/node_modules/.bin
 PATH := $(LOCAL_PATH):$(PATH)
+MANIFEST?=manifest.json
 
 ### General targets
 
@@ -25,6 +26,6 @@ node_modules:
 
 prod:
 	@mkdir -p build
-	@PATH=$(PATH) MANIFEST=manifest.json webpack --bail --config $(POE_UI)/webpack.config.js --output-path build
+	@PATH=$(PATH) MANIFEST=$(MANIFEST) node $(POE_UI)/bin/build
 
 .PHONY: clean build prod install
