@@ -47,6 +47,18 @@ exports = module.exports = function(opts) {
     app.locals.env[key] = value;
   };
 
+  app.useBefore('router', function applyEnv(req, res, next) {
+    var env = {};
+    var v;
+    for (var k in app.locals.env) {
+      v = app.locals.env[k];
+      if (typeof v === 'function') env[k] = v(req, res);
+      else env[k] = v;
+    }
+    res.locals.env = env;
+    next();
+  });
+
   if (opts.parseCookies) app.useBefore('router', stack.middleware.cookieParser());
 
   if (!opts.parseBody) {
