@@ -1,6 +1,6 @@
 {
   "name": "poe-ui",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "high-productivity collection of tools and practices for rapidly writing production-ready applications",
   "main": "client.js",
   "repository": {
