@@ -3,10 +3,9 @@ module.exports = function initBuilder(r, app, opts, NODE_ENV) {
   if (!DEVELOPMENT) return;
 
   var WebpackDevServer = r('webpack-dev-server');
-  var socketio = r('webpack-dev-server/node_modules/socket.io');
   var colors = require('colors');
 
-  if (!WebpackDevServer || !socketio) return;
+  if (!WebpackDevServer) return;
 
   app.on('ready', function(httpServer) {
     var config = app.builder;
@@ -42,19 +41,17 @@ module.exports = function initBuilder(r, app, opts, NODE_ENV) {
       });
     }
 
-    server.io = socketio.listen(httpServer, {
-      'log level': 1
-    });
-    server.io.sockets.on('connection', function(socket) {
-      if (this.hot) socket.emit('hot');
-      if (!this._stats) return;
-      this._sendStats(socket, this._stats.toJson());
-    }.bind(server));
+    httpServer.listen = function() {}
+
+    server.listeningApp = httpServer;
+    server.listen();
+
+    delete httpServer.listen;
 
     process.on('SIGTERM', close);
     process.on('SIGINT', close);
     function close() {
-      server.middleware.close();
+      server.close();
     }
   });
 }
