@@ -49,9 +49,10 @@ module.exports = function(r, app, opts, NODE_ENV) {
    */
 
   var styleLoader = load('style-loader');
-  builder.addLoader(/\.(ess\?(dynamic|raw))$/, load('ess-loader!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1!ess2ast-loader'));
-  builder.addStyle('css', load('css-loader'));
-  builder.addStyle(/\.(ess)$/, load('css-loader!autoprefixer-loader!ess-loader!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1!ess2ast-loader'), styleLoader);
+  builder.addLoader(/\.(ess\?(dynamic|raw))$/, load('ess-loader!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1!ess2ast-loader?urlRequire=1'));
+  builder.addStyle('css', load('css-loader?-minimize'));
+  var essLoaderOpts = NODE_ENV === 'development' ? '?postcss=autoprefixer' : '';
+  builder.addStyle(/\.(ess)$/, load('ess-loader' + essLoaderOpts + '!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1&native-path=1!ess2ast-loader?urlRequire=1'), styleLoader);
 
   /**
    * Fonts
