@@ -37,7 +37,7 @@ function login(opts, additionalParams, explicitLogin) {
       response_type: 'code',
       scope: Array.isArray(opts.scope) ? opts.scope.join(' ') : opts.scope,
       // TODO sign the state
-      state: explicitLogin ? req.base : verifyState(req, req.get('referrer'))
+      state: explicitLogin ? req.base : verifyState(req, req.get('referrer') || req.base + req.url)
     };
 
     for (var k in additionalParams) {
