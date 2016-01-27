@@ -1,6 +1,6 @@
 module.exports = function(r, app, opts, NODE_ENV) {
   var proxy = r('simple-http-proxy', 'silent');
-  var API_URL = opts.apiUrl;
+  var API_URL = opts.proxyApiUrl;
   if (!API_URL || NODE_ENV !== 'development' || !proxy) return;
   API_URL = API_URL.replace(/^ws/, 'http');
 

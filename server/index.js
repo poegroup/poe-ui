@@ -22,6 +22,7 @@ exports = module.exports = function(opts) {
   opt('parseBody', false);
   opt('cdnUrl', process.env.CDN_URL || '');
   opt('apiUrl', process.env.API_URL);
+  opt('proxyApiUrl', opts.apiUrl);
   opt('xforward', xforward);
   opt('oauthClientId', process.env.OAUTH_CLIENT_ID);
   opt('oauthClientSecret', process.env.OAUTH_CLIENT_SECRET);
