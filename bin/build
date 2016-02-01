@@ -1,14 +1,18 @@
-var webpack = require(process.cwd() + '/node_modules/webpack');
+var appPath = process.argv[2] || process.cwd();
+var buildPath = process.argv[3] || process.cwd() + '/build.json';
+var webpackPath = process.argv[4] || process.cwd() + '/node_modules/webpack';
+
+var webpack = require(webpackPath);
 
 try {
-  var entries = require(process.cwd() + '/build.json');
+  var entries = require(buildPath);
 } catch (e) {
   var entries = {main:{}};
 }
 
 var config = Object.keys(entries).map(function(entry) {
-  delete require.cache[require.resolve(process.cwd())];
-  var child = require(process.cwd()).builder;
+  delete require.cache[require.resolve(appPath)];
+  var child = require(appPath).builder;
   child.name = entry;
   var main = child.entry.main;
   delete child.entry.main;
