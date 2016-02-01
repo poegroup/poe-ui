@@ -18,6 +18,8 @@ exports = module.exports = function(opts) {
   opts = opts || {};
   opt('root', process.cwd());
   opt('entry', opts.root + '/src');
+  opt('manifest', opts.root + '/manifest.json');
+  opt('buildPath', opts.root + '/build');
   opt('parseCookies', true);
   opt('parseBody', false);
   opt('cdnUrl', process.env.CDN_URL || '');

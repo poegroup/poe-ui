@@ -2,11 +2,12 @@ var urlparse = require('url').parse;
 
 module.exports = function(r, app, opts, NODE_ENV, middleware) {
   var defaultCdn = opts.cdnUrl;
-  var root = opts.root;
+  var manifest = opts.manifest;
+  var buildPath = opts.buildPath;
   var DEVELOPMENT = NODE_ENV === 'development';
 
   app.useBefore('router', '/build', function build(req, res, next) {
-    middleware.static(opts.root + '/build', {
+    middleware.static(buildPath, {
       maxAge: req.env === 'production' ? 31557600 : 0
     })(req, res, next);
   });
@@ -34,7 +35,7 @@ module.exports = function(r, app, opts, NODE_ENV, middleware) {
 
   function lookup(cdn, min, dir, type) {
     // TODO maybe deprecate unminified support - the prod build doesn't do it now anyway...
-    return (r(root + '/manifest.json')[type] || []).map(function(entry) {
+    return (r(manifest)[type] || []).map(function(entry) {
       return cdn + dir + '/' + entry;
     });
   }
