@@ -33,7 +33,11 @@ function PoeApp(element, context, cb) {
     window.hyperStore = context.store;
   }
 
-  router.run(function(Handler) {
+  var metrics = recordMetrics(context.store, context.events) || function() {};
+
+  router.run(function(Handler, state) {
+    metrics(state);
+
     React.withContext(context, function() {
       var root = el(Handler);
 
@@ -63,4 +67,41 @@ function $get(path, parent, fallback) {
     else parent = child;
   }
   return parent;
+}
+
+function recordMetrics(store, events) {
+  if (!events) return;
+
+  if (events.measure) store.on('change', function(href, time, err, headers) {
+    var name = (headers || {})['x-res'];
+    if (!name) return;
+
+    events.measure('store.' + name, time, 'ms', {
+      href: href,
+      absolute: false,
+      error: err
+    });
+  });
+
+  if (!events.profile) return;
+
+  var initialLoad = true;
+
+  return function(state) {
+    var name = state.routes.reduce(function(acc, route) {
+      if (route.name) acc.push(route.name);
+      return acc;
+    }, ['route']).join('.');
+
+    var end = events.profile(name, {
+      href: state.path,
+      absolute: initialLoad
+    }, initialLoad);
+
+    initialLoad = false;
+
+    store.once('complete', function() {
+      end();
+    });
+  };
 }
