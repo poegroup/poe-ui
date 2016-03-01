@@ -42,7 +42,7 @@ module.exports = function(r, app, opts, NODE_ENV) {
    */
 
   builder.resolve.extensions.push('.jade');
-  builder.addLoader('jade', load((NODE_ENV === 'development' ? 'react-component-loader!' : '') + es6 + '!onus-loader!' + ast2template + '!jade2ast-loader'));
+  builder.addLoader('jade', load(es6 + '!onus-loader!' + ast2template + '!jade2ast-loader'));
 
   /**
    * CSS

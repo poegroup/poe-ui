@@ -2,8 +2,8 @@
  * Module dependencies
  */
 
-var React = process.env.NODE_ENV === 'production' ? require('react') : require('react/addons');
-var Router = require('react-router');
+var React = require('react');
+var assign = require('object-assign');
 var el = React.createElement;
 
 /**
@@ -19,15 +19,7 @@ exports['default'] = PoeApp;
  * @param {String} name
  */
 
-function PoeApp(element, context, cb) {
-  cb = cb || function() {};
-  var isString = typeof element === 'string';
-
-  var router = Router.create({
-    location: isString ? element : Router.HistoryLocation,
-    routes: context.routes(el, $get, context)
-  });
-
+function PoeApp(element, context) {
   if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
     window.hyperFormat = context.format;
     window.hyperStore = context.store;
@@ -35,18 +27,23 @@ function PoeApp(element, context, cb) {
 
   var metrics = recordMetrics(context.store, context.events) || function() {};
 
-  router.run(function(Handler, state) {
-    metrics(state);
+  var routeOpts = context.router || {};
+  delete context.router;
 
-    React.withContext(context, function() {
-      var root = el(Handler);
+  return React.withContext(context, function() {
+    var Routes = routeOpts.routes;
+    if (!Routes) throw new Error('Missing routes');
 
-      if (isString) return cb(null, React.renderToStaticMarkup.bind(null, root));
-      return React.render(root, element);
-    });
+    delete routeOpts.routes;
+
+    var root = el(Routes, assign({
+      format: context.format,
+      onChange: metrics
+    }, routeOpts));
+
+    if (typeof element === 'string') return React.renderToStaticMarkup(root);
+    return React.render(root, element);
   });
-
-  return router;
 }
 
 exports.React = React;
@@ -57,16 +54,6 @@ exports.React = React;
 
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   window.React = React;
-}
-
-function $get(path, parent, fallback) {
-  for (var i = 0, child; i < path.length; i++) {
-    if (!parent) return undefined;
-    child = parent[path[i]];
-    if (typeof child === 'function') parent = child.bind(parent);
-    else parent = child;
-  }
-  return parent;
 }
 
 function recordMetrics(store, events) {
@@ -88,13 +75,8 @@ function recordMetrics(store, events) {
   var initialLoad = true;
 
   return function(state) {
-    var name = state.routes.reduce(function(acc, route) {
-      if (route.name) acc.push(route.name);
-      return acc;
-    }, ['route']).join('.');
-
-    var end = events.profile(name, {
-      href: state.path,
+    var end = events.profile(state.activeComponentName, {
+      href: state.pathname + state.search,
       absolute: initialLoad
     }, initialLoad);
 

@@ -35,7 +35,7 @@ module.exports = function initBuilder(r, app, opts, NODE_ENV) {
         if (errs.length) {
           console.error('====ERRORS====\n'.red);
           errs.forEach(function(err) {
-            console.error((err.module || {}).context.red + ':\n' + err.stack || err.message || err);
+            console.error(((err.module || {}).context || '').red + ':\n' + err.stack || err.message || err);
           });
         }
       });
