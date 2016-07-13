@@ -10,9 +10,15 @@ module.exports = function(r, app, opts, NODE_ENV) {
   var webpack = r('webpack');
   if (!Builder) return;
   var entry = opts.entry;
+  var builderOpts = opts.builder || {};
   var builder = app.builder = Builder(entry, webpack);
 
-  var es6 = load('babel-loader?optional=runtime&modules=commonStrict&cacheDirectory=' + (opts.assetCache || '/tmp'));
+  var babel = r('babel-loader/package.json').version.split('.')[0];
+
+  var es6 = babel == '5' ?
+    load('babel-loader?optional=runtime&modules=commonStrict&cacheDirectory=' + (opts.assetCache || '/tmp')) :
+    load('babel-loader?presets[]=es2015&plugins[]=transform-runtime&cacheDirectory=' + (opts.assetCache || '/tmp'));
+
   var ast2template = load('ast2template-loader?root=' + r.resolve(entry + '/root.js', 'silent'));
 
   /**
@@ -23,6 +29,7 @@ module.exports = function(r, app, opts, NODE_ENV) {
     config.loader = es6;
     builder.module.loaders.push(config);
   };
+  builder.addES6.loader = es6;
 
   builder.addES6({
     test: /\.(js)$/,
@@ -41,18 +48,22 @@ module.exports = function(r, app, opts, NODE_ENV) {
    * Markup
    */
 
-  builder.resolve.extensions.push('.jade');
-  builder.addLoader('jade', load(es6 + '!onus-loader!' + ast2template + '!jade2ast-loader'));
+  if (builderOpts.jade !== false) {
+    builder.resolve.extensions.push('.jade');
+    builder.addLoader('jade', load(es6 + '!onus-loader!' + ast2template + '!jade2ast-loader'));
+  }
 
   /**
    * CSS
    */
 
-  var styleLoader = load('style-loader');
-  builder.addLoader(/\.(ess\?(dynamic|raw))$/, load('ess-loader!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1!ess2ast-loader?urlRequire=1'));
-  builder.addStyle('css', load('css-loader?-minimize'));
-  var essLoaderOpts = NODE_ENV === 'development' ? '?postcss=autoprefixer' : '';
-  builder.addStyle(/\.(ess)$/, load('ess-loader' + essLoaderOpts + '!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1&native-path=1!ess2ast-loader?urlRequire=1'), styleLoader);
+  if (builderOpts.styles !== false) {
+    var styleLoader = load('style-loader');
+    builder.addLoader(/\.(ess\?(dynamic|raw))$/, load('ess-loader!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1!ess2ast-loader?urlRequire=1'));
+    builder.addStyle('css', load('css-loader?-minimize'));
+    var essLoaderOpts = NODE_ENV === 'development' ? '?postcss=autoprefixer' : '';
+    builder.addStyle(/\.(ess)$/, load('ess-loader' + essLoaderOpts + '!' + es6 + '!' + ast2template + '&keyName=false&pass-through=1&native-path=1!ess2ast-loader?urlRequire=1'), styleLoader);
+  }
 
   /**
    * Fonts
