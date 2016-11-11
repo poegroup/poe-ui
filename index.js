@@ -4,49 +4,63 @@
 
 var React = require('react');
 var assign = require('object-assign');
+var createClass = React.createClass;
 var el = React.createElement;
 
 /**
  * Expose the PoeApp
  */
 
+exports = module.exports = PoeApp;
 exports['default'] = PoeApp;
 
 /**
  * Create a PoeApp
  *
- * @param {Object} routes
- * @param {String} name
+ * @param {Object} context
  */
 
-function PoeApp(element, context) {
+function PoeApp(context) {
   if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
     window.hyperFormat = context.format;
     window.hyperStore = context.store;
   }
 
-  var metrics = recordMetrics(context.store, context.events) || function() {};
-
   var routeOpts = context.router || {};
   delete context.router;
 
-  return React.withContext(context, function() {
-    var Routes = routeOpts.routes;
-    if (!Routes) throw new Error('Missing routes');
+  var Routes = routeOpts.routes;
+  if (!Routes) throw new Error('Missing routes');
 
-    delete routeOpts.routes;
+  delete routeOpts.routes;
 
-    var root = el(Routes, assign({
-      format: context.format,
-      onChange: metrics
-    }, routeOpts));
+  var root = el(Routes, assign({
+    format: context.format
+  }, routeOpts));
 
-    if (typeof element === 'string') return React.renderToStaticMarkup(root);
-    return React.render(root, element);
-  });
+  return el(withContext(context, root));
 }
 
 exports.React = React;
+
+function withContext(context, child) {
+  return createClass({
+    displayName: 'PoeApp',
+
+    childContextTypes: Object.keys(context).reduce(function(acc, key) {
+      acc[key] = React.PropTypes.any;
+      return acc;
+    }, {}),
+
+    getChildContext: function() {
+      return context;
+    },
+
+    render: function() {
+      return child;
+    }
+  });
+}
 
 /**
  * Expose React to the window
@@ -54,36 +68,4 @@ exports.React = React;
 
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   window.React = React;
-}
-
-function recordMetrics(store, events) {
-  if (!events) return;
-
-  if (events.measure) store.on('change', function(href, time, err, headers) {
-    var name = (headers || {})['x-res'];
-    if (!name) return;
-
-    events.measure('store.' + name, time, 'ms', {
-      href: href,
-      absolute: false,
-      error: err
-    });
-  });
-
-  if (!events.profile) return;
-
-  var initialLoad = true;
-
-  return function(state) {
-    var end = events.profile(state.activeComponentName, {
-      href: state.pathname + state.search,
-      absolute: initialLoad
-    }, initialLoad);
-
-    initialLoad = false;
-
-    store.once('complete', function() {
-      end();
-    });
-  };
 }
