@@ -69,3 +69,5 @@ function withContext(context, child) {
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   window.React = React;
 }
+
+exports.__esModule = true
